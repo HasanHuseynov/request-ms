@@ -1,1 +1,18 @@
-spring.application.name=request-ms
+spring:
+  application:
+    name: request-ms
+  datasource:
+    url: jdbc:postgresql://localhost:5432/request-db
+    username: postgres
+    password: 5253228432
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+swagger-ui:
+  path: /swagger-ui.html
+  enabled: true
+
+server:
+  port: 8082
