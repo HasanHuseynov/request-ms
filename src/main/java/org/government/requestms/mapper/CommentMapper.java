@@ -1,18 +1,18 @@
 package org.government.requestms.mapper;
-
-import lombok.Builder;
+import java.util.List;
 import org.government.requestms.dto.request.CommentRequest;
 import org.government.requestms.dto.response.CommentResponse;
 import org.government.requestms.entity.Comment;
-
+import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 @Mapper(
+        builder = @Builder(
+                disableBuilder = true
+        )
 )
 public interface CommentMapper {
     Comment fromDTO(CommentRequest commentRequest);
