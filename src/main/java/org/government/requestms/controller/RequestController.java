@@ -7,6 +7,7 @@ import org.government.requestms.dto.response.RequestResponseForAdmin;
 import org.government.requestms.dto.response.RequestResponseForUser;
 import org.government.requestms.service.RequestService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class RequestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('USER')")
     public String createRequest(@Valid @RequestBody RequestDto requestDto) {
         requestService.createRequest(requestDto);
         return "Yeni müraciət yaradıldı";
@@ -26,14 +28,15 @@ public class RequestController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<RequestResponseForAdmin> getAllRequest() {
         return requestService.getAllRequest();
     }
 
     @GetMapping("get-user-requests")
     @ResponseStatus(HttpStatus.OK)
-    public List<RequestResponseForUser> getRequest(@RequestParam String email) {
-        return requestService.getRequest(email);
+    public List<RequestResponseForUser> getRequest() {
+        return requestService.getRequest();
     }
 
     @PutMapping("/{request_id}")

@@ -8,6 +8,8 @@ import org.government.requestms.entity.Request;
 import org.government.requestms.exception.AllException;
 import org.government.requestms.mapper.RequestMapper;
 import org.government.requestms.repository.RequestRepository;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -21,6 +23,8 @@ public class RequestService {
 
     public void createRequest(RequestDto requestDto) {
         Request requestEntity = requestMapper.mapToEntity(requestDto);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        requestEntity.setEmail(email);
         requestRepository.save(requestEntity);
     }
 
@@ -32,7 +36,8 @@ public class RequestService {
         return requestMapper.mapToDtoListAdmin(requestList);
     }
 
-    public List<RequestResponseForUser> getRequest(String email) {
+    public List<RequestResponseForUser> getRequest() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Request> requestList = requestRepository.findByEmail(email)
                 .orElse(null);
         return requestMapper.mapToDtoListUser(requestList);

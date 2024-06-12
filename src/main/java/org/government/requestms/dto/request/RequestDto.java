@@ -9,7 +9,6 @@ import lombok.ToString;
 @ToString
 public class RequestDto {
     private String categoryId;
-    private String email;
     private String address;
     private String description;
 }
