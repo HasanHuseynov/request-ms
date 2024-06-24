@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper
 @Component
 public abstract class RequestMapper {
     @Mapping(target = "status", expression = "java(createStatus())")

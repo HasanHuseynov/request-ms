@@ -45,7 +45,7 @@ public class CommentController {
         return ResponseEntity.ok("Comment deleted successfully!");
     }
 
-    public CommentController(final CommentService commentService) {
+    public CommentController(CommentService commentService) {
         this.commentService = commentService;
     }
 }

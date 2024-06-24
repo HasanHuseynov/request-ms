@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(
-    name = "like"
+    name = "like", schema = "request_ms"
 )
 public class Like {
     @Id
