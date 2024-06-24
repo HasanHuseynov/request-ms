@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "request")
+@Table(name = "request",schema = "request_ms")
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +29,9 @@ public class Request {
     private LocalDateTime lastModified;
     @OneToMany(mappedBy = "request", cascade = CascadeType.REMOVE)
     private List<Comment> comment;
+
+    @OneToMany(mappedBy = "request", cascade = CascadeType.ALL)
+    private List<Like> like;
+
+
 }
