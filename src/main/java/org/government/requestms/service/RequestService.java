@@ -4,11 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.RequestDto;
 import org.government.requestms.dto.response.RequestResponseForAdmin;
 import org.government.requestms.dto.response.RequestResponseForUser;
+import org.government.requestms.entity.Category;
 import org.government.requestms.entity.Request;
-import org.government.requestms.exception.AllException;
+import org.government.requestms.exception.RequestNotFoundException;
 import org.government.requestms.mapper.RequestMapper;
+import org.government.requestms.repository.CategoryRepository;
 import org.government.requestms.repository.RequestRepository;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +21,16 @@ import java.util.List;
 public class RequestService {
     private final RequestRepository requestRepository;
     private final RequestMapper requestMapper;
+    private final CategoryRepository categoryRepository;
 
-    public void createRequest(RequestDto requestDto) {
-        Request requestEntity = requestMapper.mapToEntity(requestDto);
+    public void createRequest(RequestDto requestDto, String categoryName) {
+        Category category = categoryRepository.findByCategoryName(categoryName)
+                .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
+
+        Request requestEntity = requestMapper.mapToEntity(requestDto, categoryName);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         requestEntity.setEmail(email);
+        requestEntity.setCategory(category);
         requestRepository.save(requestEntity);
     }
 
@@ -46,7 +52,7 @@ public class RequestService {
 
     public void updateRequest(Long requestId, RequestDto requestDto) {
         Request oldRequest = requestRepository.findById(requestId)
-                .orElseThrow(() -> new AllException("request not found"));
+                .orElseThrow(() -> new RequestNotFoundException("request not found"));
         if (oldRequest != null) {
             Request updateRequest = requestMapper.mapToUpdateEntity(oldRequest, requestDto);
             requestRepository.save(updateRequest);
@@ -55,7 +61,7 @@ public class RequestService {
 
     public void deleteRequest(Long requestId) {
         Request requestEntity = requestRepository.findById(requestId)
-                .orElseThrow(() -> new AllException("Request not found"));
+                .orElseThrow(() -> new RequestNotFoundException("Request not found"));
         requestRepository.delete(requestEntity);
     }
 }

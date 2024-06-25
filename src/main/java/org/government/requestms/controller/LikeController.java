@@ -1,6 +1,7 @@
 package org.government.requestms.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.government.requestms.dto.request.LikeRequest;
 import org.government.requestms.dto.response.LikeResponse;
 import org.government.requestms.service.LikeService;
 import org.springframework.http.ResponseEntity;

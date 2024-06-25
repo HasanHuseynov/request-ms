@@ -21,8 +21,9 @@ public class RequestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('USER')")
-    public String createRequest(@Valid @RequestBody RequestDto requestDto) {
-        requestService.createRequest(requestDto);
+    public String createRequest(@Valid @RequestBody RequestDto requestDto,
+                                @RequestParam String categoryName) {
+        requestService.createRequest(requestDto,categoryName);
         return "Yeni müraciət yaradıldı";
     }
 

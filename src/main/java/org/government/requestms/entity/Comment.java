@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "comment",schema = "request_ms")
+@Table(name = "comment", schema = "request_ms")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class Comment {
     private LocalDateTime createDate;
     private LocalDateTime lastModified;
     @ManyToOne
+    @JoinColumn(name = "request_id")
     private Request request;
-
 
 }

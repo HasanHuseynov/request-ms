@@ -21,13 +21,23 @@ public class ExceptionHandle {
 
     }
 
-    @ExceptionHandler(AllException.class)
-    public ResponseEntity<ErrorDetails> handleUserNotfoundException(AllException e) {
+    @ExceptionHandler(RequestNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleUserNotfoundException(RequestNotFoundException e) {
         ErrorDetails errorDetails = new ErrorDetails();
         errorDetails.setMessage(e.getMessage());
         errorDetails.setStatusCode(HttpStatus.NOT_FOUND.value());
         errorDetails.setTimeStamp(LocalDateTime.now());
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+
+    }
+
+    @ExceptionHandler(ExistCategoryException.class)
+    public ResponseEntity<ErrorDetails> handleUserNotfoundException(ExistCategoryException e) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setMessage(e.getMessage());
+        errorDetails.setStatusCode(HttpStatus.CONFLICT.value());
+        errorDetails.setTimeStamp(LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
 
     }
 }

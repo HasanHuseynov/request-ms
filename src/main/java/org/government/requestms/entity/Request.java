@@ -1,7 +1,6 @@
 package org.government.requestms.entity;
 
 import jakarta.persistence.*;
-import jdk.jfr.Category;
 import lombok.*;
 import org.government.requestms.enums.Status;
 
@@ -13,14 +12,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "request",schema = "request_ms")
+@Table(name = "request", schema = "request_ms")
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long requestId;
     private String email;
-    private Long categoryId;
-    private String categoryName;
+    private String organizationName;
     private String address;
     private String description;
     @Enumerated(EnumType.STRING)
@@ -29,9 +27,11 @@ public class Request {
     private LocalDateTime lastModified;
     @OneToMany(mappedBy = "request", cascade = CascadeType.REMOVE)
     private List<Comment> comment;
-
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL)
     private List<Like> like;
+    @OneToOne()
+    @JoinColumn(name = "category_id")
+    private Category category;
 
 
 }

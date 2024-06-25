@@ -8,7 +8,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class RequestDto {
-    private String categoryId;
     private String address;
     private String description;
 }

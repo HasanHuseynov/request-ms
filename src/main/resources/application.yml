@@ -9,6 +9,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        default_schema: request_ms
     show-sql: true
 swagger-ui:
   path: /swagger-ui.html
