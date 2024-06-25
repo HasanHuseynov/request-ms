@@ -21,4 +21,4 @@ server:
   port: 8082
 
 jwt:
-  secret: 0044mysupersecretkey745supersecretkey1231mysupersecretkey1231mysupersecretkey
+  secret: "0044mysupersecretkey745supersecretkey1231mysupersecretkey1231mysupersecretkey"

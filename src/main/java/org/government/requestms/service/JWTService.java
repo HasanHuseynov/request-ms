@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +43,7 @@ public class JWTService {
     }
 
     private Key getSignKey() {
-        byte[] key = Decoders.BASE64.decode(secretKey);
+        byte[] key = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(key);
     }
 
@@ -61,6 +62,5 @@ public class JWTService {
                 .verify(token);
         return decodedJWT.getClaim("authorities").asList(String.class);
     }
-
 
 }
