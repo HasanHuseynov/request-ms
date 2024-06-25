@@ -47,6 +47,11 @@ public class JWTService {
         return Keys.hmacShaKeyFor(key);
     }
 
+//    private Key getSignKey() {
+//        byte[] key = Decoders.BASE64.decode(secretKey);
+//        return Keys.hmacShaKeyFor(key);
+//    }
+
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String userName = extractUsername(token);
         return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));

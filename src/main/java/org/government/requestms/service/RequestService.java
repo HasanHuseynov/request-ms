@@ -46,9 +46,8 @@ public class RequestService {
     public List<RequestResponseForUser> getRequest() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Request> requestList = requestRepository.findByEmail(email)
-                .orElse(null);
+                .orElse(Collections.emptyList());
         return requestMapper.mapToDtoListUser(requestList);
-
     }
 
     public void updateRequest(Long requestId, RequestDto requestDto, String categoryName) {

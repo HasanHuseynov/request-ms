@@ -23,7 +23,7 @@ public class RequestController {
     @PreAuthorize("hasAuthority('USER')")
     public String createRequest(@Valid @RequestBody RequestDto requestDto,
                                 @RequestParam String categoryName) {
-        requestService.createRequest(requestDto,categoryName);
+        requestService.createRequest(requestDto, categoryName);
         return "Yeni müraciət yaradıldı";
     }
 
@@ -34,7 +34,7 @@ public class RequestController {
         return requestService.getAllRequest();
     }
 
-    @GetMapping("get-user-requests")
+    @GetMapping("user-requests")
     @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
     public List<RequestResponseForUser> getRequest() {
@@ -44,8 +44,8 @@ public class RequestController {
     @PutMapping("/{request_id}")
     @PreAuthorize("hasAuthority('USER')")
     public String updateRequest(@RequestBody @Valid RequestDto requestDto,
-                                @PathVariable Long request_id,@RequestParam String categoryName) {
-        requestService.updateRequest(request_id, requestDto,categoryName);
+                                @PathVariable Long request_id, @RequestParam String categoryName) {
+        requestService.updateRequest(request_id, requestDto, categoryName);
         return "Müraciətiniz uğurla yeniləndi";
 
     }
@@ -55,7 +55,7 @@ public class RequestController {
     @ResponseStatus(HttpStatus.OK)
     public String deleteRequest(@PathVariable Long request_id) {
         requestService.deleteRequest(request_id);
-        return "OK";
+        return "Müraciətiniz silindi";
 
     }
 }
