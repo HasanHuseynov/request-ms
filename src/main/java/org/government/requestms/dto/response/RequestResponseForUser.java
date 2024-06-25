@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
 @ToString
 public class RequestResponseForUser {
     private String email;
-    private Long categoryId;
-    private String categoryName;
     private String address;
     private String description;
     private Status status;

@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 public class RequestResponseForAdmin {
     private Long requestId;
     private String email;
-    private Long categoryId;
-    private String categoryName;
     private String address;
     private String description;
     private Status status;

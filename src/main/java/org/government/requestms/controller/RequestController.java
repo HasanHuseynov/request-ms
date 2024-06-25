@@ -35,20 +35,23 @@ public class RequestController {
     }
 
     @GetMapping("get-user-requests")
+    @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
     public List<RequestResponseForUser> getRequest() {
         return requestService.getRequest();
     }
 
     @PutMapping("/{request_id}")
+    @PreAuthorize("hasAuthority('USER')")
     public String updateRequest(@RequestBody @Valid RequestDto requestDto,
-                                @PathVariable Long request_id) {
-        requestService.updateRequest(request_id, requestDto);
+                                @PathVariable Long request_id,@RequestParam String categoryName) {
+        requestService.updateRequest(request_id, requestDto,categoryName);
         return "Müraciətiniz uğurla yeniləndi";
 
     }
 
     @DeleteMapping("/{request_id}")
+    @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
     public String deleteRequest(@PathVariable Long request_id) {
         requestService.deleteRequest(request_id);

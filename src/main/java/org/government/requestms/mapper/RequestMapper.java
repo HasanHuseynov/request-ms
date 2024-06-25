@@ -18,7 +18,7 @@ public abstract class RequestMapper {
     @Mapping(target = "status", expression = "java(createStatus())")
     @Mapping(target = "lastModified", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "createDate", expression = "java(java.time.LocalDateTime.now())")
-    public abstract Request mapToEntity(RequestDto requestDto,String categoryName);
+    public abstract Request mapToEntity(RequestDto requestDto, String categoryName);
 
     public Status createStatus() {
         return Status.GÖNDƏRİLDİ;
@@ -32,5 +32,5 @@ public abstract class RequestMapper {
     @Mapping(target = "status", expression = "java(createStatus())")
     @Mapping(target = "lastModified", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "createDate", ignore = true)
-    public abstract Request mapToUpdateEntity(@MappingTarget Request oldRequest, RequestDto requestDto);
+    public abstract Request mapToUpdateEntity(@MappingTarget Request oldRequest, RequestDto requestDto, String categoryName);
 }

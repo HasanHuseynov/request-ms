@@ -17,11 +17,18 @@ public class Like {
     @GeneratedValue(
             strategy = GenerationType.IDENTITY
     )
+    @Column(name = "like_id")
     private Long likeId;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "create_date")
     private LocalDateTime createDate;
+
+    @Column(name = "last_modified")
     private LocalDateTime lastModified;
-    private Long count;
+
     @ManyToOne
     @JoinColumn(name = "request_id")
     private Request request;

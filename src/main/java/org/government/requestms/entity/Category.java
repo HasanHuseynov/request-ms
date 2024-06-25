@@ -13,6 +13,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,22 +25,28 @@ import java.time.LocalDateTime;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "category_id")
     private Long categoryId;
+
+    @Column(name = "category_name")
     private String categoryName;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "create_date", nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime createDate;
 
-    @Column(insertable = false)
+    @Column(name = "last_modified", insertable = false)
     @LastModifiedDate
     private LocalDateTime lastModified;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "create_by", nullable = false, updatable = false)
     @CreatedBy
     private String createBy;
 
-    @Column(insertable = false)
+    @Column(name = "last_modified_by", insertable = false)
     @LastModifiedBy
     private String lastModifiedBy;
+
+    @OneToMany(mappedBy = "category")
+    List<Request> requests;
 }

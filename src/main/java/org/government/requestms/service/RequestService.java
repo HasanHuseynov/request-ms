@@ -28,6 +28,7 @@ public class RequestService {
                 .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
 
         Request requestEntity = requestMapper.mapToEntity(requestDto, categoryName);
+
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         requestEntity.setEmail(email);
         requestEntity.setCategory(category);
@@ -50,18 +51,22 @@ public class RequestService {
 
     }
 
-    public void updateRequest(Long requestId, RequestDto requestDto) {
+    public void updateRequest(Long requestId, RequestDto requestDto, String categoryName) {
         Request oldRequest = requestRepository.findById(requestId)
-                .orElseThrow(() -> new RequestNotFoundException("request not found"));
+                .orElseThrow(() -> new RequestNotFoundException("Müraciət tapılmadı"));
+        Category category = categoryRepository.findByCategoryName(categoryName)
+                .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
+
         if (oldRequest != null) {
-            Request updateRequest = requestMapper.mapToUpdateEntity(oldRequest, requestDto);
+            Request updateRequest = requestMapper.mapToUpdateEntity(oldRequest, requestDto, categoryName);
+            updateRequest.setCategory(category);
             requestRepository.save(updateRequest);
         }
     }
 
     public void deleteRequest(Long requestId) {
         Request requestEntity = requestRepository.findById(requestId)
-                .orElseThrow(() -> new RequestNotFoundException("Request not found"));
+                .orElseThrow(() -> new RequestNotFoundException("Müraciət tapılmadı"));
         requestRepository.delete(requestEntity);
     }
 }
