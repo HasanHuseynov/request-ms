@@ -32,9 +32,9 @@ public class CategoryService {
     }
 
     public CategoryResponse getAllCategoryName(String categoryName) {
-        Category categoryResponse = categoryRepository.findByCategoryName(categoryName)
+        Category category = categoryRepository.findByCategoryName(categoryName)
                 .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
-        return categoryMapper.mapToDto(categoryResponse);
+        return categoryMapper.mapToDto(category);
     }
 
 
@@ -44,9 +44,15 @@ public class CategoryService {
         }
         Category oldCategory = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
-        if (oldCategory != null) {
+
             Category updateCategory = categoryMapper.mapToUpdateEntity(categoryRequest, oldCategory);
             categoryRepository.save(updateCategory);
         }
+
+
+    public void deleteCategory(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
+        categoryRepository.delete(category);
     }
 }

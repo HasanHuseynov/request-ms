@@ -7,6 +7,7 @@ import org.government.requestms.service.CommentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,7 @@ public class CommentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<String> createComment(@RequestBody CommentRequest commentRequest) {
         this.commentService.createNewComment(commentRequest);
         return ResponseEntity.ok("Comment has been created!");

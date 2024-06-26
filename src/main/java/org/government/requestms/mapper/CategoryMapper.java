@@ -17,7 +17,7 @@ public interface CategoryMapper {
 
     List<CategoryResponse> mapToListDto(List<Category> categories);
 
-    CategoryResponse mapToDto(Category categoryResponse);
+    CategoryResponse mapToDto(Category category);
 
     @Mapping(target = "categoryId", ignore = true)
     Category mapToUpdateEntity(CategoryRequest categoryRequest, @MappingTarget Category oldCategory);

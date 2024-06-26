@@ -2,8 +2,7 @@ package org.government.requestms.service;
 
 import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.RequestDto;
-import org.government.requestms.dto.response.RequestResponseForAdmin;
-import org.government.requestms.dto.response.RequestResponseForUser;
+import org.government.requestms.dto.response.RequestResponse;
 import org.government.requestms.entity.Category;
 import org.government.requestms.entity.Request;
 import org.government.requestms.exception.RequestNotFoundException;
@@ -35,24 +34,25 @@ public class RequestService {
         requestRepository.save(requestEntity);
     }
 
-    public List<RequestResponseForAdmin> getAllRequest() {
+    public List<RequestResponse> getAllRequest() {
         List<Request> requestList = requestRepository.findAll();
         if (requestList.isEmpty()) {
             return Collections.emptyList();
         }
-        return requestMapper.mapToDtoListAdmin(requestList);
+        return requestMapper.mapToDtoList(requestList);
     }
 
-    public List<RequestResponseForUser> getRequest() {
+    public List<RequestResponse> getRequest() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Request> requestList = requestRepository.findByEmail(email)
                 .orElse(Collections.emptyList());
-        return requestMapper.mapToDtoListUser(requestList);
+        return requestMapper.mapToDtoList(requestList);
     }
 
     public void updateRequest(Long requestId, RequestDto requestDto, String categoryName) {
         Request oldRequest = requestRepository.findById(requestId)
                 .orElseThrow(() -> new RequestNotFoundException("Müraciət tapılmadı"));
+
         Category category = categoryRepository.findByCategoryName(categoryName)
                 .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
 

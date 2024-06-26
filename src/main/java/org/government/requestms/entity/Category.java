@@ -21,6 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "category", schema = "request_ms")
+@Audited
 @EntityListeners(AuditingEntityListener.class)
 public class Category {
     @Id
@@ -35,18 +36,25 @@ public class Category {
     @CreatedDate
     private LocalDateTime createDate;
 
-    @Column(name = "last_modified", insertable = false)
-    @LastModifiedDate
-    private LocalDateTime lastModified;
-
     @Column(name = "create_by", nullable = false, updatable = false)
     @CreatedBy
     private String createBy;
 
-    @Column(name = "last_modified_by", insertable = false)
+    @Column(name = "last_modified")
+    @LastModifiedDate
+    private LocalDateTime lastModified;
+
+    @Column(name = "last_modified_by")
     @LastModifiedBy
     private String lastModifiedBy;
 
+    @Audited
     @OneToMany(mappedBy = "category")
     List<Request> requests;
+
+    @PrePersist()
+    public void prePersist() {
+        lastModified = null;
+        lastModifiedBy = null;
+    }
 }

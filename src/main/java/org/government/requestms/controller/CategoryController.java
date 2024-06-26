@@ -3,6 +3,7 @@ package org.government.requestms.controller;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.government.requestms.dto.request.CategoryRequest;
 import org.government.requestms.dto.response.CategoryResponse;
 import org.government.requestms.exception.ExistCategoryException;
@@ -35,7 +36,7 @@ public class CategoryController {
         return categoryService.getAllCategory();
     }
 
-    @GetMapping("categoryName")
+    @GetMapping("category-name")
     @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
     public CategoryResponse getCategoryName(@RequestParam String categoryName) {
@@ -49,6 +50,14 @@ public class CategoryController {
                                  @PathVariable Long categoryId) throws ExistCategoryException {
         categoryService.updateCategory(categoryRequest, categoryId);
         return "Kateqoriya yeniləndi";
+    }
+
+    @DeleteMapping("/{categoryId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @ResponseStatus(HttpStatus.OK)
+    public String deleteCategory(@PathVariable Long categoryId) {
+        categoryService.deleteCategory(categoryId);
+        return "Kateqoriya silindi";
     }
 
 }

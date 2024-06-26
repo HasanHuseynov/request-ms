@@ -3,8 +3,7 @@ package org.government.requestms.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.RequestDto;
-import org.government.requestms.dto.response.RequestResponseForAdmin;
-import org.government.requestms.dto.response.RequestResponseForUser;
+import org.government.requestms.dto.response.RequestResponse;
 import org.government.requestms.service.RequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,14 +29,14 @@ public class RequestController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public List<RequestResponseForAdmin> getAllRequest() {
+    public List<RequestResponse> getAllRequest() {
         return requestService.getAllRequest();
     }
 
     @GetMapping("user-requests")
     @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
-    public List<RequestResponseForUser> getRequest() {
+    public List<RequestResponse> getRequest() {
         return requestService.getRequest();
     }
 

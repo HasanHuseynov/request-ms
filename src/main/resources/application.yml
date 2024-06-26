@@ -12,7 +12,7 @@ spring:
     properties:
       hibernate:
         default_schema: request_ms
-    show-sql: true
+#    show-sql: true
 swagger-ui:
   path: /swagger-ui.html
   enabled: true
