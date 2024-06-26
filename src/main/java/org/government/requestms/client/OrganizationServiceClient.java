@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "organization-ms", url = "localhost:8080/customer")
 public interface OrganizationServiceClient {
-    @GetMapping("/{organization-name}")
+    @GetMapping()
     ResponseEntity<OrganizationResponse> getOrganizationByName(@RequestParam String organizationName);
 
 }
