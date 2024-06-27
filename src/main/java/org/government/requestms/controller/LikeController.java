@@ -22,8 +22,8 @@ public class LikeController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createLike(@RequestBody LikeRequest likeRequest) {
-        this.likeService.createNewLike(likeRequest);
+    public ResponseEntity<String> createLike() {
+        this.likeService.createNewLike();
         return ResponseEntity.ok("Like has been created!");
     }
 
@@ -40,8 +40,8 @@ public class LikeController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<LikeResponse> postLike(@RequestBody LikeRequest likeRequest, @RequestParam Long id) {
-        var response  = likeService.assignLikeToRequest(id,likeRequest);
+    public ResponseEntity<LikeResponse> postLike(@RequestParam Long id) {
+        var response  = likeService.assignLikeToRequest(id);
         return ResponseEntity.ok(response);
     }
 
