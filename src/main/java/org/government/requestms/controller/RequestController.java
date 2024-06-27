@@ -3,10 +3,10 @@ package org.government.requestms.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.RequestDto;
-import org.government.requestms.dto.response.RequestResponseForAdmin;
-import org.government.requestms.dto.response.RequestResponseForUser;
+import org.government.requestms.dto.response.RequestResponse;
 import org.government.requestms.service.RequestService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,36 +19,43 @@ public class RequestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String createRequest(@Valid @RequestBody RequestDto requestDto) {
-        requestService.createRequest(requestDto);
+    @PreAuthorize("hasAuthority('USER')")
+    public String createRequest(@Valid @RequestBody RequestDto requestDto,
+                                @RequestParam String categoryName, @RequestHeader("Authorization") String token) {
+
+        requestService.createRequest(requestDto, categoryName, token);
         return "Yeni müraciət yaradıldı";
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<RequestResponseForAdmin> getAllRequest() {
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public List<RequestResponse> getAllRequest() {
         return requestService.getAllRequest();
     }
 
-    @GetMapping("get-user-requests")
+    @GetMapping("user-requests")
+    @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
-    public List<RequestResponseForUser> getRequest(@RequestParam String email) {
-        return requestService.getRequest(email);
+    public List<RequestResponse> getRequest() {
+        return requestService.getRequest();
     }
 
     @PutMapping("/{request_id}")
+    @PreAuthorize("hasAuthority('USER')")
     public String updateRequest(@RequestBody @Valid RequestDto requestDto,
-                                @PathVariable Long request_id) {
-        requestService.updateRequest(request_id, requestDto);
+                                @PathVariable Long request_id, @RequestParam String categoryName) {
+        requestService.updateRequest(request_id, requestDto, categoryName);
         return "Müraciətiniz uğurla yeniləndi";
 
     }
 
     @DeleteMapping("/{request_id}")
+    @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
     public String deleteRequest(@PathVariable Long request_id) {
         requestService.deleteRequest(request_id);
-        return "OK";
+        return "Müraciətiniz silindi";
 
     }
 }
