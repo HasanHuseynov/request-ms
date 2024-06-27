@@ -1,5 +1,6 @@
 package org.government.requestms.exception;
 
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -39,5 +40,10 @@ public class ExceptionHandle {
         errorDetails.setTimeStamp(LocalDateTime.now());
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
 
+    }
+
+    @ExceptionHandler(FeignException.NotFound.class)
+    public ResponseEntity<?> handleFeignNotFoundException(FeignException.NotFound ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("not found :" + ex.contentUTF8());
     }
 }

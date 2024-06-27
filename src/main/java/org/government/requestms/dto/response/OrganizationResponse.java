@@ -8,4 +8,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class OrganizationResponse {
+    private OrganizationData data;
+    private String message;
 }

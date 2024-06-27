@@ -24,7 +24,8 @@ public abstract class RequestMapper {
 
 
     @Mapping(target = "status", ignore = true)
-    public abstract Request mapToUpdateEntity(@MappingTarget Request oldRequest, RequestDto requestDto, String categoryName);
+    public abstract Request mapToUpdateEntity(@MappingTarget Request oldRequest, RequestDto requestDto,
+                                              String categoryName);
 
     public abstract List<RequestResponse> mapToDtoList(List<Request> requestList);
 }

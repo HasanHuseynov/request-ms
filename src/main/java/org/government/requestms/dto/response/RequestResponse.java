@@ -17,6 +17,7 @@ public class RequestResponse {
     private String address;
     private String description;
     private Status status;
+    private String organizationName;
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createDate;
