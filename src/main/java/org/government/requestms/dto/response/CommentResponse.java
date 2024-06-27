@@ -17,5 +17,4 @@ public class CommentResponse {
 
     @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss")
     private LocalDateTime lastModified;
-    private Request request;
 }

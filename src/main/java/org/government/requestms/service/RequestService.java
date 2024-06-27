@@ -1,5 +1,6 @@
 package org.government.requestms.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.government.requestms.client.OrganizationServiceClient;
 import org.government.requestms.dto.request.RequestDto;
@@ -37,8 +38,8 @@ public class RequestService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         requestEntity.setEmail(email);
         requestEntity.setCategory(category);
+        assert organizationResponse != null;
         requestEntity.setOrganizationName(organizationResponse.getData().getName());
-        System.out.println(organizationResponse);
         requestRepository.save(requestEntity);
     }
 

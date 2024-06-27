@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,4 +21,5 @@ public class CategoryResponse {
 
     @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss")
     private LocalDateTime lastModified;
+
 }

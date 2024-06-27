@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.government.requestms.enums.Status;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,4 +25,12 @@ public class RequestResponse {
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime lastModified;
+
+    private Integer commentCount;
+
+    private Integer likeCount;
+
+    private List<LikeResponse> like;
+
+    private List<CommentResponse> comment;
 }

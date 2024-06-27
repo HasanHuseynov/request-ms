@@ -8,9 +8,5 @@ import org.government.requestms.entity.Request;
 @Getter
 @Setter
 public class CommentRequest {
-    private String email;
     private String commentText;
-    private Request request;
-
-
 }

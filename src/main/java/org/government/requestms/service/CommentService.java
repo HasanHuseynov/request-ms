@@ -2,13 +2,14 @@ package org.government.requestms.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
 import org.government.requestms.dto.request.CommentRequest;
 import org.government.requestms.dto.response.CommentResponse;
 import org.government.requestms.entity.Comment;
 import org.government.requestms.exception.CommentNotFoundException;
+import org.government.requestms.exception.RequestNotFoundException;
 import org.government.requestms.mapper.CommentMapper;
 import org.government.requestms.repository.CommentRepository;
+import org.government.requestms.repository.RequestRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
+    private final RequestRepository requestRepository;
 
     public List<CommentResponse> getAllComment() {
         List<Comment> commentEntities = commentRepository.findAll();
@@ -26,9 +28,20 @@ public class CommentService {
     }
 
     public CommentResponse createNewComment(CommentRequest commentRequest) {
+
         Comment commentEntity = commentMapper.fromDTO(commentRequest);
         commentEntity = commentRepository.save(commentEntity);
         return  commentMapper.toDTO(commentEntity);
+    }
+
+    public CommentResponse assignCommentToRequest(Long id, CommentRequest commentRequest) {
+        var request = requestRepository.findById(id)
+                .orElseThrow(() -> new RequestNotFoundException("Request not found with username: " + id));
+        var commentEntity = commentMapper.fromDTO(commentRequest);
+        commentEntity.setRequest(request);
+        commentEntity = commentRepository.save(commentEntity);
+        return commentMapper.toDTO(commentEntity);
+
     }
 
     public void deleteComment(Long id) {

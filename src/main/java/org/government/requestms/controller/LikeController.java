@@ -22,8 +22,8 @@ public class LikeController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createLike(@RequestBody LikeRequest likeRequest) {
-        this.likeService.createNewLike(likeRequest);
+    public ResponseEntity<String> createLike() {
+        this.likeService.createNewLike();
         return ResponseEntity.ok("Like has been created!");
     }
 
@@ -37,6 +37,12 @@ public class LikeController {
     public ResponseEntity<String> deleteLike(Long id) {
         this.likeService.deleteLike(id);
         return ResponseEntity.ok("Like deleted successfully!");
+    }
+
+    @PostMapping("/post")
+    public ResponseEntity<LikeResponse> postLike(@RequestParam Long id) {
+        var response  = likeService.assignLikeToRequest(id);
+        return ResponseEntity.ok(response);
     }
 
 

@@ -8,8 +8,5 @@ import org.government.requestms.entity.Request;
 @Getter
 @Setter
 public class LikeRequest {
-    private String email;
-    private LocalDateTime createDate;
-    private LocalDateTime lastModified;
-    private Request request;
+
 }
