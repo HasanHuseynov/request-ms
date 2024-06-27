@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -15,27 +13,24 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "comment", schema = "request_ms")
+@Table(name = "category", schema = "request_ms")
 @Audited
 @EntityListeners(AuditingEntityListener.class)
-
-public class Comment {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
-    private Long commentId;
+    @Column(name = "category_id")
+    private Long categoryId;
 
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "comment_text")
-    private String commentText;
+    @Column(name = "category_name")
+    private String categoryName;
 
     @Column(name = "create_date", nullable = false, updatable = false)
     @CreatedDate
@@ -54,14 +49,12 @@ public class Comment {
     private String lastModifiedBy;
 
     @Audited
-    @ManyToOne
-    @JoinColumn(name = "request_id")
-    private Request request;
+    @OneToMany(mappedBy = "category")
+    List<Request> requests;
 
     @PrePersist()
     public void prePersist() {
         lastModified = null;
         lastModifiedBy = null;
     }
-
 }

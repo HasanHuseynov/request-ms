@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: request-ms
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: hasan
@@ -17,6 +19,9 @@ swagger-ui:
 
 server:
   port: 8082
+
+jwt:
+  secret: 0044mysupersecretkey745supersecretkey1231mysupersecretkey1231mysupersecretkey
 
 #spring:
 #  datasource:

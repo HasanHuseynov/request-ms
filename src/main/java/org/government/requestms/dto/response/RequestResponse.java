@@ -1,5 +1,6 @@
 package org.government.requestms.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,15 +12,18 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class RequestResponseForAdmin {
+public class RequestResponse {
     private Long requestId;
     private String email;
-    private Long categoryId;
-    private String categoryName;
     private String address;
     private String description;
     private Status status;
+    private String organizationName;
+
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createDate;
+
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime lastModified;
 
     private Integer commentCount;
