@@ -2,6 +2,8 @@ package org.government.requestms.controller;
 
 import java.util.List;
 import org.government.requestms.dto.request.CommentRequest;
+import org.government.requestms.dto.request.CommentRequest;
+import org.government.requestms.dto.response.CommentResponse;
 import org.government.requestms.dto.response.CommentResponse;
 import org.government.requestms.service.CommentService;
 import org.slf4j.Logger;
@@ -43,6 +45,12 @@ public class CommentController {
     public ResponseEntity<String> deleteComment(Long id) {
         this.commentService.deleteComment(id);
         return ResponseEntity.ok("Comment deleted successfully!");
+    }
+
+    @PostMapping("/post")
+    public ResponseEntity<CommentResponse> postComment(@RequestBody CommentRequest commentRequest, @RequestParam Long id) {
+        var response  = commentService.assignCommentToRequest(id,commentRequest);
+        return ResponseEntity.ok(response);
     }
 
     public CommentController(CommentService commentService) {

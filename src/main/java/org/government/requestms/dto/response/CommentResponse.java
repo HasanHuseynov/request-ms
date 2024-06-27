@@ -12,5 +12,4 @@ public class CommentResponse {
     private String commentText;
     private LocalDateTime createDate;
     private LocalDateTime lastModified;
-    private Request request;
 }

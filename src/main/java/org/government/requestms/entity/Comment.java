@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -17,10 +19,12 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    private Integer commentId;
     private String email;
     private String commentText;
+    @CreationTimestamp
     private LocalDateTime createDate;
+    @UpdateTimestamp
     private LocalDateTime lastModified;
     @ManyToOne
     private Request request;

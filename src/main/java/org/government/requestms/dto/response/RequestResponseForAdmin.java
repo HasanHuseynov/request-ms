@@ -6,6 +6,7 @@ import lombok.ToString;
 import org.government.requestms.enums.Status;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,4 +21,12 @@ public class RequestResponseForAdmin {
     private Status status;
     private LocalDateTime createDate;
     private LocalDateTime lastModified;
+
+    private Integer commentCount;
+
+    private Integer likeCount;
+
+    private List<LikeResponse> like;
+
+    private List<CommentResponse> comment;
 }

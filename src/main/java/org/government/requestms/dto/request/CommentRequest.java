@@ -10,7 +10,5 @@ import org.government.requestms.entity.Request;
 public class CommentRequest {
     private String email;
     private String commentText;
-    private Request request;
-
-
+    //private Request request;
 }

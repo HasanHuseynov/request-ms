@@ -2,12 +2,15 @@ package org.government.requestms.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.government.requestms.dto.request.LikeRequest;
 import org.government.requestms.dto.response.LikeResponse;
 import org.government.requestms.entity.Like;
+import org.government.requestms.exception.AllException;
 import org.government.requestms.exception.LikeNotFoundException;
 import org.government.requestms.mapper.LikeMapper;
 import org.government.requestms.repository.LikeRepository;
+import org.government.requestms.repository.RequestRepository;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class LikeService {
     private final LikeRepository likeRepository;
     private final LikeMapper likeMapper;
+    private final RequestRepository requestRepository;
 
     public List<LikeResponse> getAllLike() {
         List<Like> likeEntities = this.likeRepository.findAll();
@@ -27,6 +31,21 @@ public class LikeService {
         likeEntity = (Like)this.likeRepository.save(likeEntity);
         return this.likeMapper.toDTO(likeEntity);
     }
+
+
+
+    public LikeResponse assignLikeToRequest(Long id, LikeRequest likeRequest) {
+        var request = requestRepository.findById(id)
+                .orElseThrow(() -> new AllException("Request not found with username: " + id));
+        var likeEntity = likeMapper.fromDTO(likeRequest);
+
+        likeEntity.setRequest(request);
+        likeEntity = likeRepository.save(likeEntity);
+        return likeMapper.toDTO(likeEntity);
+
+    }
+
+
 
     public void deleteLike(Long id) {
         Like likeEntity = (Like)this.likeRepository.findById(id).orElseThrow(() -> {

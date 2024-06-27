@@ -7,17 +7,22 @@ import org.government.requestms.dto.response.RequestResponseForUser;
 import org.government.requestms.entity.Request;
 import org.government.requestms.exception.AllException;
 import org.government.requestms.mapper.RequestMapper;
+import org.government.requestms.repository.CommentRepository;
+import org.government.requestms.repository.LikeRepository;
 import org.government.requestms.repository.RequestRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class RequestService {
     private final RequestRepository requestRepository;
     private final RequestMapper requestMapper;
+    private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
 
     public void createRequest(RequestDto requestDto) {
         Request requestEntity = requestMapper.mapToEntity(requestDto);
@@ -29,8 +34,16 @@ public class RequestService {
         if (requestList.isEmpty()) {
             return Collections.emptyList();
         }
-        return requestMapper.mapToDtoListAdmin(requestList);
+        List<RequestResponseForAdmin> responseList = requestMapper.mapToDtoListAdmin(requestList);
+        responseList.forEach(response -> {
+            Long commentCount = commentRepository.countByRequest(requestRepository.getOne(response.getRequestId()));
+            Long likeCount = likeRepository.countByRequest(requestRepository.getOne(response.getRequestId()));
+            response.setCommentCount(Math.toIntExact(commentCount));
+            response.setLikeCount(Math.toIntExact(likeCount));
+        });
+        return responseList;
     }
+
 
     public List<RequestResponseForUser> getRequest(String email) {
         List<Request> requestList = requestRepository.findByEmail(email)

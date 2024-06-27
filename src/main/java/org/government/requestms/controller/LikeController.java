@@ -39,5 +39,11 @@ public class LikeController {
         return ResponseEntity.ok("Like deleted successfully!");
     }
 
+    @PostMapping("/post")
+    public ResponseEntity<LikeResponse> postLike(@RequestBody LikeRequest likeRequest, @RequestParam Long id) {
+        var response  = likeService.assignLikeToRequest(id,likeRequest);
+        return ResponseEntity.ok(response);
+    }
+
 
 }
