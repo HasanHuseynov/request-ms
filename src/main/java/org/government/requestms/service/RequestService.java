@@ -44,8 +44,8 @@ public class RequestService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         requestEntity.setEmail(email);
         requestEntity.setCategory(category);
-        assert organizationResponse != null;
         requestEntity.setOrganizationName(organizationResponse.getData().getName());
+        System.out.println(organizationResponse);
         requestRepository.save(requestEntity);
     }
 
@@ -54,44 +54,47 @@ public class RequestService {
         if (requestList.isEmpty()) {
             return Collections.emptyList();
         }
-        return getRequestResponses(requestList);
+        List<RequestResponse> responseList = requestMapper.mapToDtoList(requestList);
+        responseList.forEach(response -> {
+            Long commentCount = commentRepository.countByRequest(requestRepository.getOne(response.getRequestId()));
+            Long likeCount = likeRepository.countByRequest(requestRepository.getOne(response.getRequestId()));
+            response.setCommentCount(Math.toIntExact(commentCount));
+            response.setLikeCount(Math.toIntExact(likeCount));
+        });
+        return responseList;
     }
 
-    public List<RequestResponse> getRequestsFilter(Status status, Long categoryId, String organizationName,LocalDateTime createDate) {
+    public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName,String days) {
         Specification<Request> spec = Specification.where(null);
         if (status != null) {
             spec = spec.and(RequestSpecification.hasStatus(status));
         }
-        if (categoryId != null) {
-            spec = spec.and(RequestSpecification.hasCategory(categoryId));
+
+        if (categoryName != null && !categoryName.isEmpty()) {
+            spec = spec.and(RequestSpecification.hasCategory(categoryName));
         }
+
         if (organizationName != null && !organizationName.isEmpty()) {
             spec = spec.and(RequestSpecification.hasOrganization(organizationName));
         }
 
-        if (createDate != null) {
-            spec = spec.and(RequestSpecification.isCreatedBefore(createDate));
+        if ("LastDay".equalsIgnoreCase(days)) {
+            spec = RequestSpecification.isCreatedWithinLast1Day();
+        } else if ("LastWeek".equalsIgnoreCase(days)) {
+            spec = RequestSpecification.isCreatedWithinLast7Days();
+        } else if ("LastMonth".equalsIgnoreCase(days)) {
+            spec = RequestSpecification.isCreatedWithinLast30Days();
         }
+        var response = requestMapper.mapToDtoList(requestRepository.findAll(spec));
 
-        return requestMapper.mapToDtoList(requestRepository.findAll(spec));
+        return response;
     }
 
     public List<RequestResponse> getRequest() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Request> requestList = requestRepository.findByEmail(email)
                 .orElse(Collections.emptyList());
-        return getRequestResponses(requestList);
-    }
-
-    private List<RequestResponse> getRequestResponses(List<Request> requestList) {
-        List<RequestResponse> responseList = requestMapper.mapToDtoList(requestList);
-        responseList.forEach(response -> {
-            Long commentCount = commentRepository.countByRequest(requestRepository.getReferenceById(response.getRequestId()));
-            Long likeCount = likeRepository.countByRequest(requestRepository.getReferenceById(response.getRequestId()));
-            response.setCommentCount(Math.toIntExact(commentCount));
-            response.setLikeCount(Math.toIntExact(likeCount));
-        });
-        return responseList;
+        return requestMapper.mapToDtoList(requestList);
     }
 
     public void updateRequest(Long requestId, RequestDto requestDto, String categoryName) {
