@@ -8,13 +8,16 @@ import org.government.requestms.dto.response.OrganizationResponse;
 import org.government.requestms.dto.response.RequestResponse;
 import org.government.requestms.entity.Category;
 import org.government.requestms.entity.Request;
+import org.government.requestms.enums.Status;
 import org.government.requestms.exception.RequestNotFoundException;
 import org.government.requestms.mapper.RequestMapper;
 import org.government.requestms.repository.CategoryRepository;
 import org.government.requestms.repository.RequestRepository;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,6 +52,26 @@ public class RequestService {
             return Collections.emptyList();
         }
         return requestMapper.mapToDtoList(requestList);
+    }
+
+    public List<RequestResponse> getRequests(Status status, Long categoryId, String organizationName,LocalDateTime createDate) {
+        Specification<Request> spec = Specification.where(null);
+        if (status != null) {
+            spec = spec.and(RequestSpecification.hasStatus(status));
+        }
+        if (categoryId != null) {
+            spec = spec.and(RequestSpecification.hasCategory(categoryId));
+        }
+        if (organizationName != null && !organizationName.isEmpty()) {
+            spec = spec.and(RequestSpecification.hasOrganization(organizationName));
+        }
+
+        if (createDate != null) {
+            spec = spec.and(RequestSpecification.isCreatedBefore(createDate));
+        }
+        var response = requestMapper.mapToDtoList(requestRepository.findAll(spec));
+
+        return response;
     }
 
     public List<RequestResponse> getRequest() {
