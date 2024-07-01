@@ -69,8 +69,8 @@ public class RequestController {
             @RequestParam(required = false) Status status,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) String organizationName,
-            @RequestParam(required = false) LocalDateTime createDate){
-        return requestService.getRequests(status, categoryId, organizationName, createDate);
+            @RequestParam(required = false) LocalDateTime createDate) {
+        return requestService.getRequestsFilter(status, categoryId, organizationName, createDate);
     }
 
 

@@ -57,7 +57,7 @@ public class RequestService {
         return getRequestResponses(requestList);
     }
 
-    public List<RequestResponse> getRequests(Status status, Long categoryId, String organizationName,LocalDateTime createDate) {
+    public List<RequestResponse> getRequestsFilter(Status status, Long categoryId, String organizationName,LocalDateTime createDate) {
         Specification<Request> spec = Specification.where(null);
         if (status != null) {
             spec = spec.and(RequestSpecification.hasStatus(status));
@@ -72,9 +72,8 @@ public class RequestService {
         if (createDate != null) {
             spec = spec.and(RequestSpecification.isCreatedBefore(createDate));
         }
-        var response = requestMapper.mapToDtoList(requestRepository.findAll(spec));
 
-        return response;
+        return requestMapper.mapToDtoList(requestRepository.findAll(spec));
     }
 
     public List<RequestResponse> getRequest() {
