@@ -64,20 +64,26 @@ public class RequestService {
         return responseList;
     }
 
-    public List<RequestResponse> getRequests(Status status, Long categoryId, String organizationName,LocalDateTime createDate) {
+    public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName,String days) {
         Specification<Request> spec = Specification.where(null);
         if (status != null) {
             spec = spec.and(RequestSpecification.hasStatus(status));
         }
-        if (categoryId != null) {
-            spec = spec.and(RequestSpecification.hasCategory(categoryId));
+
+        if (categoryName != null && !categoryName.isEmpty()) {
+            spec = spec.and(RequestSpecification.hasCategory(categoryName));
         }
+
         if (organizationName != null && !organizationName.isEmpty()) {
             spec = spec.and(RequestSpecification.hasOrganization(organizationName));
         }
 
-        if (createDate != null) {
-            spec = spec.and(RequestSpecification.isCreatedBefore(createDate));
+        if ("LastDay".equalsIgnoreCase(days)) {
+            spec = RequestSpecification.isCreatedWithinLast1Day();
+        } else if ("LastWeek".equalsIgnoreCase(days)) {
+            spec = RequestSpecification.isCreatedWithinLast7Days();
+        } else if ("LastMonth".equalsIgnoreCase(days)) {
+            spec = RequestSpecification.isCreatedWithinLast30Days();
         }
         var response = requestMapper.mapToDtoList(requestRepository.findAll(spec));
 
