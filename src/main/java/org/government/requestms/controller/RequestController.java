@@ -4,11 +4,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.RequestDto;
 import org.government.requestms.dto.response.RequestResponse;
+import org.government.requestms.entity.Request;
+import org.government.requestms.enums.Status;
 import org.government.requestms.service.RequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -58,4 +61,15 @@ public class RequestController {
         return "Müraciətiniz silindi";
 
     }
+
+    @GetMapping("/filter")
+    public List<RequestResponse> getRequests(
+            @RequestParam(required = false) Status status,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String organizationName,
+            @RequestParam(required = false) LocalDateTime createDate){
+        return requestService.getRequests(status, categoryId, organizationName, createDate);
+    }
+
+
 }

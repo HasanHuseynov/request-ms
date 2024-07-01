@@ -44,6 +44,6 @@ public class ExceptionHandle {
 
     @ExceptionHandler(FeignException.NotFound.class)
     public ResponseEntity<?> handleFeignNotFoundException(FeignException.NotFound ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("not found :" + ex.contentUTF8());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.contentUTF8());
     }
 }
