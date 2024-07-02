@@ -48,6 +48,7 @@ public class RequestController {
 
     @PutMapping("/{request_id}")
     @PreAuthorize("hasAuthority('USER')")
+    @ResponseStatus(HttpStatus.OK)
     public String updateRequest(@RequestBody @Valid RequestDto requestDto,
                                 @PathVariable Long request_id, @RequestParam String categoryName) {
         requestService.updateRequest(request_id, requestDto, categoryName);
@@ -67,6 +68,7 @@ public class RequestController {
 
     @GetMapping("/filter")
     @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','GOVERMENT')")
+    @ResponseStatus(HttpStatus.OK)
     public List<RequestResponse> getRequestByFilter(
             @RequestParam(required = false) Status status,
             @RequestParam(required = false) String categoryName,
@@ -78,8 +80,15 @@ public class RequestController {
 
     @GetMapping("/search")
     @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','GOVERMENT')")
+    @ResponseStatus(HttpStatus.OK)
     public List<RequestResponse> searchRequests(@RequestParam String keyword) {
         return requestService.searchRequests(keyword);
     }
 
+    @PatchMapping("/update-status/{requestId}")
+    @PreAuthorize("hasAnyAuthority('SUPER_STAFF','STAFF')")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateStatus(@RequestParam(required = false) Status status, @PathVariable Long requestId) {
+        requestService.updateStatus(status,requestId);
+    }
 }

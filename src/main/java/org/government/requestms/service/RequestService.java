@@ -57,7 +57,8 @@ public class RequestService {
         }
         return getRequestResponses(requestList);
     }
-    public List<RequestResponse> searchRequests (String keyword){
+
+    public List<RequestResponse> searchRequests(String keyword) {
         var requestList = requestRepository.findByDescriptionContaining(keyword);
         return requestMapper.mapToDtoList(requestList);
     }
@@ -124,6 +125,14 @@ public class RequestService {
         Request requestEntity = requestRepository.findById(requestId)
                 .orElseThrow(() -> new RequestNotFoundException("Müraciət tapılmadı"));
         requestRepository.delete(requestEntity);
+    }
+
+    public void updateStatus(Status status, Long requestId) {
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RequestNotFoundException("Status tapılmadı"));
+        request.setStatus(status);
+        requestRepository.save(request);
+
     }
 }
 
