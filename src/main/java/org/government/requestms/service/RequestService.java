@@ -64,6 +64,11 @@ public class RequestService {
         return responseList;
     }
 
+    public List<RequestResponse> searchRequests(String keyword) {
+        var requestList = requestRepository.findByDescriptionContaining(keyword);
+        return requestMapper.mapToDtoList(requestList);
+    }
+
     public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName,String days) {
         Specification<Request> spec = Specification.where(null);
         if (status != null) {

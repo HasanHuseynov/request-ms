@@ -63,6 +63,7 @@ public class RequestController {
 
     }
 
+
     @GetMapping("/filter")
     public List<RequestResponse> getRequestByFilter(
             @RequestParam(required = false) Status status,
@@ -74,5 +75,9 @@ public class RequestController {
         return requestService.getRequestByFilter(status, categoryName, organizationName, days);
     }
 
+    @GetMapping("/search")
+    public List<RequestResponse> searchRequests(@RequestParam String keyword) {
+        return requestService.searchRequests(keyword);
+    }
 
 }

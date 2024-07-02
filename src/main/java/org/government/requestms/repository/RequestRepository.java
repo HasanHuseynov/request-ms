@@ -12,4 +12,6 @@ import java.util.Optional;
 
 public interface RequestRepository extends JpaRepository<Request, Long> , JpaSpecificationExecutor<Request> {
     Optional<List<Request>> findByEmail(String email);
+    @Query("SELECT r FROM Request r WHERE LOWER(r.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    List<Request> findByDescriptionContaining(@Param("keyword") String keyword);
 }
