@@ -57,36 +57,37 @@ public class RequestService {
         }
         return getRequestResponses(requestList);
     }
-
-    public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName, String days) {
-    public List<RequestResponse> searchRequests(String keyword) {
+    public List<RequestResponse> searchRequests (String keyword){
         var requestList = requestRepository.findByDescriptionContaining(keyword);
         return requestMapper.mapToDtoList(requestList);
     }
 
-    public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName,String days) {
-        Specification<Request> spec = Specification.where(null);
-        if (status != null) {
-            spec = spec.and(RequestSpecification.hasStatus(status));
-        }
+    public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName, String days) {
 
-        if (categoryName != null && !categoryName.isEmpty()) {
-            spec = spec.and(RequestSpecification.hasCategory(categoryName));
-        }
+        {
+            Specification<Request> spec = Specification.where(null);
+            if (status != null) {
+                spec = spec.and(RequestSpecification.hasStatus(status));
+            }
 
-        if (organizationName != null && !organizationName.isEmpty()) {
-            spec = spec.and(RequestSpecification.hasOrganization(organizationName));
-        }
+            if (categoryName != null && !categoryName.isEmpty()) {
+                spec = spec.and(RequestSpecification.hasCategory(categoryName));
+            }
 
-        if ("LastDay".equalsIgnoreCase(days)) {
-            spec = RequestSpecification.isCreatedWithinLast1Day();
-        } else if ("LastWeek".equalsIgnoreCase(days)) {
-            spec = RequestSpecification.isCreatedWithinLast7Days();
-        } else if ("LastMonth".equalsIgnoreCase(days)) {
-            spec = RequestSpecification.isCreatedWithinLast30Days();
-        }
+            if (organizationName != null && !organizationName.isEmpty()) {
+                spec = spec.and(RequestSpecification.hasOrganization(organizationName));
+            }
 
-        return requestMapper.mapToDtoList(requestRepository.findAll(spec));
+            if ("LastDay".equalsIgnoreCase(days)) {
+                spec = RequestSpecification.isCreatedWithinLast1Day();
+            } else if ("LastWeek".equalsIgnoreCase(days)) {
+                spec = RequestSpecification.isCreatedWithinLast7Days();
+            } else if ("LastMonth".equalsIgnoreCase(days)) {
+                spec = RequestSpecification.isCreatedWithinLast30Days();
+            }
+
+            return requestMapper.mapToDtoList(requestRepository.findAll(spec));
+        }
     }
 
     public List<RequestResponse> getRequest() {
@@ -114,9 +115,9 @@ public class RequestService {
         Category category = categoryRepository.findByCategoryName(categoryName)
                 .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
 
-            Request updateRequest = requestMapper.mapToUpdateEntity(oldRequest, requestDto, categoryName);
-            updateRequest.setCategory(category);
-            requestRepository.save(updateRequest);
+        Request updateRequest = requestMapper.mapToUpdateEntity(oldRequest, requestDto, categoryName);
+        updateRequest.setCategory(category);
+        requestRepository.save(updateRequest);
     }
 
     public void deleteRequest(Long requestId) {
@@ -125,3 +126,4 @@ public class RequestService {
         requestRepository.delete(requestEntity);
     }
 }
+

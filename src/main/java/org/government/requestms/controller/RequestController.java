@@ -43,7 +43,7 @@ public class RequestController {
     @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
     public List<RequestResponse> getRequest() {
-        return requestService.getRequest();
+        return requestService.getAllRequest();
     }
 
     @PutMapping("/{request_id}")
@@ -72,12 +72,12 @@ public class RequestController {
             @RequestParam(required = false) String categoryName,
             @RequestParam(required = false) String organizationName,
             @Parameter(description = "Parameter types: LastDay, LastWeek, LastMonth")
-            @RequestParam(required = false) String days)
-    {
+            @RequestParam(required = false) String days) {
         return requestService.getRequestByFilter(status, categoryName, organizationName, days);
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','GOVERMENT')")
     public List<RequestResponse> searchRequests(@RequestParam String keyword) {
         return requestService.searchRequests(keyword);
     }
