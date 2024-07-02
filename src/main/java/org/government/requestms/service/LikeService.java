@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.government.requestms.dto.request.LikeRequest;
 import org.government.requestms.dto.response.LikeResponse;
 import org.government.requestms.entity.Like;
+import org.government.requestms.exception.ExistCategoryException;
 import org.government.requestms.exception.LikeNotFoundException;
 import org.government.requestms.exception.RequestNotFoundException;
 import org.government.requestms.mapper.LikeMapper;
@@ -30,41 +31,43 @@ public class LikeService {
 
 
     public LikeResponse createNewLike() {
-        var name =  SecurityContextHolder.getContext().getAuthentication().getName();
+        var name = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        var likeEntity  = new Like();
+        var likeEntity = new Like();
         likeEntity.setEmail(name);
-        likeEntity = (Like)likeRepository.save(likeEntity);
+        likeEntity = (Like) likeRepository.save(likeEntity);
         return this.likeMapper.toDTO(likeEntity);
     }
 
 
-
-    public LikeResponse assignLikeToRequest(Long id) {
+    public LikeResponse assignLikeToRequest(Long id) throws ExistCategoryException {
         var name = SecurityContextHolder.getContext().getAuthentication().getName();
         var request = requestRepository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException("Request not found with username: " + id));
 
+        if (likeRepository.existsByRequest_RequestIdAndEmail(id, name)) {
+            throw new ExistCategoryException("Bu müraciətə artıq like vermisiz");
+        }
+
         var likeEntity = new Like();
         likeEntity.setEmail(name);
         likeEntity.setRequest(request);
-        likeEntity = likeRepository.save(likeEntity);
+        likeRepository.save(likeEntity);
         return likeMapper.toDTO(likeEntity);
 
     }
 
 
-
     public void deleteLike(Long id) {
-        Like likeEntity = (Like)this.likeRepository.findById(id).orElseThrow(() -> {
-            return new LikeNotFoundException("Like not found with id: " + id);
+        Like likeEntity = (Like) this.likeRepository.findById(id).orElseThrow(() -> {
+            return new RequestNotFoundException("Like not found with id: " + id);
         });
         log.info("Deleted the like with details:" + likeEntity.toString());
         this.likeRepository.delete(likeEntity);
     }
 
     public void updateLike(Long id, LikeRequest likeRequest) {
-        Like likeEntity = (Like)this.likeRepository.findById(id).orElseThrow(() -> {
+        Like likeEntity = (Like) this.likeRepository.findById(id).orElseThrow(() -> {
             return new LikeNotFoundException("Like not found with id:" + id);
         });
         this.likeMapper.mapUpdateRequestToEntity(likeEntity, likeRequest);

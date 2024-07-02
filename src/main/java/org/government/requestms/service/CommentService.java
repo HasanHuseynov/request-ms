@@ -10,6 +10,7 @@ import org.government.requestms.exception.RequestNotFoundException;
 import org.government.requestms.mapper.CommentMapper;
 import org.government.requestms.repository.CommentRepository;
 import org.government.requestms.repository.RequestRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,14 +32,17 @@ public class CommentService {
 
         Comment commentEntity = commentMapper.fromDTO(commentRequest);
         commentEntity = commentRepository.save(commentEntity);
-        return  commentMapper.toDTO(commentEntity);
+        return commentMapper.toDTO(commentEntity);
     }
 
     public CommentResponse assignCommentToRequest(Long id, CommentRequest commentRequest) {
         var request = requestRepository.findById(id)
                 .orElseThrow(() -> new RequestNotFoundException("Request not found with username: " + id));
+        var email = SecurityContextHolder.getContext().getAuthentication().getName();
+
         var commentEntity = commentMapper.fromDTO(commentRequest);
         commentEntity.setRequest(request);
+        commentEntity.setEmail(email);
         commentEntity = commentRepository.save(commentEntity);
         return commentMapper.toDTO(commentEntity);
 
@@ -46,17 +50,17 @@ public class CommentService {
 
     public void deleteComment(Long id) {
         Comment commentEntity = commentRepository.findById(id).orElseThrow(() -> {
-            return new CommentNotFoundException("Comment not found with id: " + id);
+            return new RequestNotFoundException("Comment not found with id: " + id);
         });
         log.info("Deleted the comment with details:" + commentEntity.toString());
-         commentRepository.delete(commentEntity);
+        commentRepository.delete(commentEntity);
     }
 
     public void updateComment(Long id, CommentRequest commentRequest) {
         Comment commentEntity = commentRepository.findById(id).orElseThrow(() -> {
             return new CommentNotFoundException("Comment not found with id:" + id);
         });
-         commentMapper.mapUpdateRequestToEntity(commentEntity, commentRequest);
-         commentRepository.save(commentEntity);
+        commentMapper.mapUpdateRequestToEntity(commentEntity, commentRequest);
+        commentRepository.save(commentEntity);
     }
 }

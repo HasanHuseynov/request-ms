@@ -10,4 +10,5 @@ import lombok.ToString;
 public class OrganizationResponse {
     private OrganizationData data;
     private String message;
+    private boolean success;
 }

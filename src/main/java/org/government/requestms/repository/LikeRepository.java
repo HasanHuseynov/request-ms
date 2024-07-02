@@ -1,5 +1,6 @@
 
 package org.government.requestms.repository;
+
 import org.government.requestms.entity.Like;
 import org.government.requestms.entity.Request;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +11,6 @@ import java.util.List;
 @Repository
 public interface LikeRepository extends JpaRepository<Like, Long> {
     Long countByRequest(Request request);
+
+    boolean existsByRequest_RequestIdAndEmail(Long requestId, String email);
 }

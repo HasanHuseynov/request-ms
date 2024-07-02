@@ -33,4 +33,5 @@ public class RequestResponse {
     private List<LikeResponse> like;
 
     private List<CommentResponse> comment;
+    private CategoryResponse category;
 }

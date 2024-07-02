@@ -18,7 +18,7 @@ public abstract class RequestMapper {
     public abstract Request mapToEntity(RequestDto requestDto, String categoryName);
 
     public Status createStatus() {
-        return Status.GÖNDƏRİLDİ;
+        return Status.Göndərildi;
 
     }
 

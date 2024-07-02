@@ -3,6 +3,7 @@ package org.government.requestms.controller;
 import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.LikeRequest;
 import org.government.requestms.dto.response.LikeResponse;
+import org.government.requestms.exception.ExistCategoryException;
 import org.government.requestms.service.LikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,7 @@ public class LikeController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<LikeResponse> postLike(@RequestParam Long id) {
+    public ResponseEntity<LikeResponse> postLike(@RequestParam Long id) throws ExistCategoryException {
         var response  = likeService.assignLikeToRequest(id);
         return ResponseEntity.ok(response);
     }

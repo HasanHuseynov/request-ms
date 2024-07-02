@@ -12,6 +12,8 @@ import org.government.requestms.enums.Status;
 import org.government.requestms.exception.RequestNotFoundException;
 import org.government.requestms.mapper.RequestMapper;
 import org.government.requestms.repository.CategoryRepository;
+import org.government.requestms.repository.CommentRepository;
+import org.government.requestms.repository.LikeRepository;
 import org.government.requestms.repository.RequestRepository;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +30,8 @@ public class RequestService {
     private final RequestMapper requestMapper;
     private final CategoryRepository categoryRepository;
     private final OrganizationServiceClient organizationServiceClient;
+    private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
 
     public void createRequest(RequestDto requestDto, String categoryName, String token) {
         Category category = categoryRepository.findByCategoryName(categoryName)
@@ -51,9 +55,10 @@ public class RequestService {
         if (requestList.isEmpty()) {
             return Collections.emptyList();
         }
-        return requestMapper.mapToDtoList(requestList);
+        return getRequestResponses(requestList);
     }
 
+    public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName, String days) {
     public List<RequestResponse> searchRequests(String keyword) {
         var requestList = requestRepository.findByDescriptionContaining(keyword);
         return requestMapper.mapToDtoList(requestList);
@@ -80,16 +85,26 @@ public class RequestService {
         } else if ("LastMonth".equalsIgnoreCase(days)) {
             spec = RequestSpecification.isCreatedWithinLast30Days();
         }
-        var response = requestMapper.mapToDtoList(requestRepository.findAll(spec));
 
-        return response;
+        return requestMapper.mapToDtoList(requestRepository.findAll(spec));
     }
 
     public List<RequestResponse> getRequest() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Request> requestList = requestRepository.findByEmail(email)
                 .orElse(Collections.emptyList());
-        return requestMapper.mapToDtoList(requestList);
+        return getRequestResponses(requestList);
+    }
+
+    private List<RequestResponse> getRequestResponses(List<Request> requestList) {
+        List<RequestResponse> responseList = requestMapper.mapToDtoList(requestList);
+        responseList.forEach(response -> {
+            Long commentCount = commentRepository.countByRequest(requestRepository.getReferenceById(response.getRequestId()));
+            Long likeCount = likeRepository.countByRequest(requestRepository.getReferenceById(response.getRequestId()));
+            response.setCommentCount(Math.toIntExact(commentCount));
+            response.setLikeCount(Math.toIntExact(likeCount));
+        });
+        return responseList;
     }
 
     public void updateRequest(Long requestId, RequestDto requestDto, String categoryName) {
@@ -99,11 +114,9 @@ public class RequestService {
         Category category = categoryRepository.findByCategoryName(categoryName)
                 .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
 
-        if (oldRequest != null) {
             Request updateRequest = requestMapper.mapToUpdateEntity(oldRequest, requestDto, categoryName);
             updateRequest.setCategory(category);
             requestRepository.save(updateRequest);
-        }
     }
 
     public void deleteRequest(Long requestId) {

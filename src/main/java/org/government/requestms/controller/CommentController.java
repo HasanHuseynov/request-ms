@@ -1,6 +1,8 @@
 package org.government.requestms.controller;
 
 import java.util.List;
+
+import jakarta.validation.Valid;
 import org.government.requestms.dto.request.CommentRequest;
 import org.government.requestms.dto.request.CommentRequest;
 import org.government.requestms.dto.response.CommentResponse;
@@ -50,8 +52,8 @@ public class CommentController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<CommentResponse> postComment(@RequestBody CommentRequest commentRequest, @RequestParam Long id) {
-        var response  = commentService.assignCommentToRequest(id,commentRequest);
+    public ResponseEntity<CommentResponse> postComment(@RequestBody @Valid CommentRequest commentRequest, @RequestParam Long id) {
+        var response = commentService.assignCommentToRequest(id, commentRequest);
         return ResponseEntity.ok(response);
     }
 
