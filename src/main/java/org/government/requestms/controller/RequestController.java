@@ -1,6 +1,7 @@
 package org.government.requestms.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.RequestDto;
@@ -25,7 +26,8 @@ public class RequestController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('USER')")
     public String createRequest(@Valid @RequestBody RequestDto requestDto,
-                                @RequestParam String categoryName, @RequestHeader("Authorization") String token) {
+                                @RequestParam String categoryName, HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
 
         requestService.createRequest(requestDto, categoryName, token);
         return "Yeni müraciət yaradıldı";

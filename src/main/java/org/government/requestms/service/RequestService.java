@@ -1,5 +1,6 @@
 package org.government.requestms.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.government.requestms.client.OrganizationServiceClient;
 import org.government.requestms.dto.request.RequestDto;
@@ -11,8 +12,6 @@ import org.government.requestms.enums.Status;
 import org.government.requestms.exception.RequestNotFoundException;
 import org.government.requestms.mapper.RequestMapper;
 import org.government.requestms.repository.CategoryRepository;
-import org.government.requestms.repository.CommentRepository;
-import org.government.requestms.repository.LikeRepository;
 import org.government.requestms.repository.RequestRepository;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,8 +28,6 @@ public class RequestService {
     private final RequestMapper requestMapper;
     private final CategoryRepository categoryRepository;
     private final OrganizationServiceClient organizationServiceClient;
-    private final CommentRepository commentRepository;
-    private final LikeRepository likeRepository;
 
     public void createRequest(RequestDto requestDto, String categoryName, String token) {
         Category category = categoryRepository.findByCategoryName(categoryName)
@@ -44,8 +41,8 @@ public class RequestService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         requestEntity.setEmail(email);
         requestEntity.setCategory(category);
+        assert organizationResponse != null;
         requestEntity.setOrganizationName(organizationResponse.getData().getName());
-        System.out.println(organizationResponse);
         requestRepository.save(requestEntity);
     }
 
@@ -54,14 +51,7 @@ public class RequestService {
         if (requestList.isEmpty()) {
             return Collections.emptyList();
         }
-        List<RequestResponse> responseList = requestMapper.mapToDtoList(requestList);
-        responseList.forEach(response -> {
-            Long commentCount = commentRepository.countByRequest(requestRepository.getOne(response.getRequestId()));
-            Long likeCount = likeRepository.countByRequest(requestRepository.getOne(response.getRequestId()));
-            response.setCommentCount(Math.toIntExact(commentCount));
-            response.setLikeCount(Math.toIntExact(likeCount));
-        });
-        return responseList;
+        return requestMapper.mapToDtoList(requestList);
     }
 
     public List<RequestResponse> searchRequests(String keyword) {
