@@ -60,7 +60,7 @@ public class LikeService {
 
     public void deleteLike(Long id) {
         Like likeEntity = (Like) this.likeRepository.findById(id).orElseThrow(() -> {
-            return new LikeNotFoundException("Like not found with id: " + id);
+            return new RequestNotFoundException("Like not found with id: " + id);
         });
         log.info("Deleted the like with details:" + likeEntity.toString());
         this.likeRepository.delete(likeEntity);

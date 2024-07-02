@@ -1,6 +1,7 @@
 package org.government.requestms.controller;
 
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.RequestDto;
@@ -25,8 +26,8 @@ public class RequestController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('USER')")
     public String createRequest(@Valid @RequestBody RequestDto requestDto,
-                                @RequestParam String categoryName, @RequestHeader("Authorization") String token) {
-
+                                @RequestParam String categoryName, HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
         requestService.createRequest(requestDto, categoryName, token);
         return "Yeni müraciət yaradıldı";
     }
@@ -64,12 +65,13 @@ public class RequestController {
     }
 
     @GetMapping("/filter")
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','GOVERMENT')")
     public List<RequestResponse> getRequestByFilter(
             @RequestParam(required = false) Status status,
             @RequestParam(required = false) String categoryName,
             @RequestParam(required = false) String organizationName,
-            @Parameter(description = "Parameter types: LastDay, LastWeek, LastMonth") @RequestParam(required = false) String days)
-
+            @Parameter(description = "Parameter types: LastDay, LastWeek, LastMonth")
+            @RequestParam(required = false) String days)
     {
         return requestService.getRequestByFilter(status, categoryName, organizationName, days);
     }

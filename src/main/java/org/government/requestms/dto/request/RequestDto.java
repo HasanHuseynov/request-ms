@@ -16,7 +16,7 @@ public class RequestDto {
 
     @NotBlank(message = "müraciət boş ola bilməz")
     @Size(min = 10, message = "Minimum 10 simvol istifadə olunmalıdır")
-    @Size(min = 10, message = "Maksimum 500 simvol istifadə oluna bilər")
+    @Size(max = 500, message = "Maksimum 500 simvol istifadə oluna bilər")
     private String description;
 
     @NotBlank(message = "organizationName boş ola bilməz")

@@ -1,6 +1,10 @@
 package org.government.requestms.enums;
 
 public enum Status {
-    GÖNDƏRİLDİ,
-    CAVABLANDI
+    Göndərildi,
+    Baxılır,
+    Əssasızdır,
+    Həlledildi,
+    Arxivdədir
+
 }

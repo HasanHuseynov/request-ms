@@ -69,7 +69,7 @@ public class Request {
     private List<Like> like;
 
     @Audited
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "category_id")
     private Category category;
 
