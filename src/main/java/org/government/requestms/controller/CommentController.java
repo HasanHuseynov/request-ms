@@ -1,10 +1,12 @@
 package org.government.requestms.controller;
 
+import java.util.Base64;
 import java.util.List;
 
 import jakarta.validation.Valid;
 import org.government.requestms.dto.request.CommentRequest;
 import org.government.requestms.dto.request.CommentRequest;
+import org.government.requestms.dto.response.BaseResponse;
 import org.government.requestms.dto.response.CommentResponse;
 import org.government.requestms.dto.response.CommentResponse;
 import org.government.requestms.service.CommentService;
@@ -28,33 +30,33 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
-    public ResponseEntity<List<CommentResponse>> getAllComments() {
-        return ResponseEntity.ok(this.commentService.getAllComment());
+    public ResponseEntity<BaseResponse<List<CommentResponse>>> getAllComments() {
+        return ResponseEntity.ok(BaseResponse.OK(commentService.getAllComment()));
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<String> createComment(@RequestBody CommentRequest commentRequest) {
+    public ResponseEntity<BaseResponse<String>> createComment(@RequestBody CommentRequest commentRequest) {
         this.commentService.createNewComment(commentRequest);
-        return ResponseEntity.ok("Comment has been created!");
+        return ResponseEntity.ok(BaseResponse.message("Comment has been created!"));
     }
 
     @PutMapping
-    public ResponseEntity<String> updateComment(@RequestParam Long id, @RequestBody CommentRequest commentRequest) {
+    public ResponseEntity<BaseResponse<String>> updateComment(@RequestParam Long id, @RequestBody CommentRequest commentRequest) {
         this.commentService.updateComment(id, commentRequest);
-        return ResponseEntity.ok("Comment updated successfully!");
+        return ResponseEntity.ok(BaseResponse.message("Comment updated successfully!"));
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteComment(Long id) {
+    public ResponseEntity<BaseResponse<String>> deleteComment(Long id) {
         this.commentService.deleteComment(id);
-        return ResponseEntity.ok("Comment deleted successfully!");
+        return ResponseEntity.ok(BaseResponse.message("Comment deleted successfully!"));
     }
 
     @PostMapping("/post")
-    public ResponseEntity<CommentResponse> postComment(@RequestBody @Valid CommentRequest commentRequest, @RequestParam Long id) {
+    public ResponseEntity<BaseResponse<CommentResponse>> postComment(@RequestBody @Valid CommentRequest commentRequest, @RequestParam Long id) {
         var response = commentService.assignCommentToRequest(id, commentRequest);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(BaseResponse.OK(response));
     }
 
     public CommentController(CommentService commentService) {

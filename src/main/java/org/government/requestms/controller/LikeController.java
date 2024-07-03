@@ -2,8 +2,9 @@ package org.government.requestms.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.LikeRequest;
+import org.government.requestms.dto.response.BaseResponse;
 import org.government.requestms.dto.response.LikeResponse;
-import org.government.requestms.exception.ExistCategoryException;
+import org.government.requestms.exception.DataExistException;
 import org.government.requestms.service.LikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,32 +19,32 @@ public class LikeController {
     private final LikeService likeService;
 
     @GetMapping
-    public ResponseEntity<List<LikeResponse>> getAllLikes() {
-        return ResponseEntity.ok(this.likeService.getAllLike());
+    public ResponseEntity<BaseResponse<List<LikeResponse>>> getAllLikes() {
+        return ResponseEntity.ok(BaseResponse.OK(likeService.getAllLike()));
     }
 
     @PostMapping
-    public ResponseEntity<String> createLike() {
+    public ResponseEntity<BaseResponse<String>> createLike() {
         this.likeService.createNewLike();
-        return ResponseEntity.ok("Like has been created!");
+        return ResponseEntity.ok(BaseResponse.message("Like has been created!"));
     }
 
     @PutMapping
-    public ResponseEntity<String> updateLike(@RequestParam Long id, @RequestBody LikeRequest likeRequest) {
+    public ResponseEntity<BaseResponse<String>> updateLike(@RequestParam Long id, @RequestBody LikeRequest likeRequest) {
         this.likeService.updateLike(id, likeRequest);
-        return ResponseEntity.ok("Like updated successfully!");
+        return ResponseEntity.ok(BaseResponse.message("Like updated successfully!"));
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteLike(Long id) {
+    public ResponseEntity<BaseResponse<String>> deleteLike(Long id) {
         this.likeService.deleteLike(id);
-        return ResponseEntity.ok("Like deleted successfully!");
+        return ResponseEntity.ok(BaseResponse.message("Like deleted successfully!"));
     }
 
     @PostMapping("/post")
-    public ResponseEntity<LikeResponse> postLike(@RequestParam Long id) throws ExistCategoryException {
-        var response  = likeService.assignLikeToRequest(id);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<BaseResponse<LikeResponse>> postLike(@RequestParam Long id) throws DataExistException {
+        var response = likeService.assignLikeToRequest(id);
+        return ResponseEntity.ok(BaseResponse.OK(response));
     }
 
 

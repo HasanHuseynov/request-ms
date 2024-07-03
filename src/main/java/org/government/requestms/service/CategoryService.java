@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.CategoryRequest;
 import org.government.requestms.dto.response.CategoryResponse;
 import org.government.requestms.entity.Category;
-import org.government.requestms.exception.ExistCategoryException;
-import org.government.requestms.exception.RequestNotFoundException;
+import org.government.requestms.exception.DataExistException;
+import org.government.requestms.exception.DataNotFoundException;
 import org.government.requestms.mapper.CategoryMapper;
 import org.government.requestms.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
@@ -18,9 +18,9 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
-    public void createCategory(CategoryRequest categoryRequest) throws ExistCategoryException {
+    public void createCategory(CategoryRequest categoryRequest) throws DataExistException {
         if (categoryRepository.existsByCategoryName(categoryRequest.getCategoryName())) {
-            throw new ExistCategoryException("Bu kateqoriya artıq mövcuddur");
+            throw new DataExistException("Bu kateqoriya artıq mövcuddur");
         }
         Category category = categoryMapper.mapToEntity(categoryRequest);
         categoryRepository.save(category);
@@ -33,17 +33,17 @@ public class CategoryService {
 
     public CategoryResponse getAllCategoryName(String categoryName) {
         Category category = categoryRepository.findByCategoryName(categoryName)
-                .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
+                .orElseThrow(() -> new DataNotFoundException("Belə bir kateqoriya mövcud deyil"));
         return categoryMapper.mapToDto(category);
     }
 
 
-    public void updateCategory(CategoryRequest categoryRequest, Long categoryId) throws ExistCategoryException {
+    public void updateCategory(CategoryRequest categoryRequest, Long categoryId) throws DataExistException {
         if (categoryRepository.existsByCategoryName(categoryRequest.getCategoryName())) {
-            throw new ExistCategoryException("Bu kateqoriya artıq mövcuddur");
+            throw new DataExistException("Bu kateqoriya artıq mövcuddur");
         }
         Category oldCategory = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
+                .orElseThrow(() -> new DataNotFoundException("Belə bir kateqoriya mövcud deyil"));
 
             Category updateCategory = categoryMapper.mapToUpdateEntity(categoryRequest, oldCategory);
             categoryRepository.save(updateCategory);
@@ -52,7 +52,7 @@ public class CategoryService {
 
     public void deleteCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
+                .orElseThrow(() -> new DataNotFoundException("Belə bir kateqoriya mövcud deyil"));
         categoryRepository.delete(category);
     }
 }

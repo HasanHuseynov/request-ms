@@ -6,7 +6,7 @@ import org.government.requestms.dto.response.RequestResponse;
 import org.government.requestms.entity.Category;
 import org.government.requestms.entity.Request;
 import org.government.requestms.enums.Status;
-import org.government.requestms.exception.RequestNotFoundException;
+import org.government.requestms.exception.DataNotFoundException;
 import org.government.requestms.mapper.RequestMapper;
 import org.government.requestms.repository.CategoryRepository;
 import org.government.requestms.repository.CommentRepository;
@@ -30,7 +30,7 @@ public class RequestService {
 
     public void createRequest(RequestDto requestDto, String categoryName) {
         Category category = categoryRepository.findByCategoryName(categoryName)
-                .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
+                .orElseThrow(() -> new DataNotFoundException("Belə bir kateqoriya mövcud deyil"));
 
         Request requestEntity = requestMapper.mapToEntity(requestDto, categoryName);
 
@@ -101,10 +101,10 @@ public class RequestService {
 
     public void updateRequest(Long requestId, RequestDto requestDto, String categoryName) {
         Request oldRequest = requestRepository.findById(requestId)
-                .orElseThrow(() -> new RequestNotFoundException("Müraciət tapılmadı"));
+                .orElseThrow(() -> new DataNotFoundException("Müraciət tapılmadı"));
 
         Category category = categoryRepository.findByCategoryName(categoryName)
-                .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
+                .orElseThrow(() -> new DataNotFoundException("Belə bir kateqoriya mövcud deyil"));
 
         Request updateRequest = requestMapper.mapToUpdateEntity(oldRequest, requestDto, categoryName);
         updateRequest.setCategory(category);
@@ -113,13 +113,13 @@ public class RequestService {
 
     public void deleteRequest(Long requestId) {
         Request requestEntity = requestRepository.findById(requestId)
-                .orElseThrow(() -> new RequestNotFoundException("Müraciət tapılmadı"));
+                .orElseThrow(() -> new DataNotFoundException("Müraciət tapılmadı"));
         requestRepository.delete(requestEntity);
     }
 
     public void updateStatus(Status status, Long requestId) {
         Request request = requestRepository.findById(requestId)
-                .orElseThrow(() -> new RequestNotFoundException("Status tapılmadı"));
+                .orElseThrow(() -> new DataNotFoundException("Status tapılmadı"));
         request.setStatus(status);
         requestRepository.save(request);
 
