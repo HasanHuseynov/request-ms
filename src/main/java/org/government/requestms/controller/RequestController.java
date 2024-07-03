@@ -26,9 +26,8 @@ public class RequestController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('USER')")
     public String createRequest(@Valid @RequestBody RequestDto requestDto,
-                                @RequestParam String categoryName, HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        requestService.createRequest(requestDto, categoryName, token);
+                                @RequestParam String categoryName) {
+        requestService.createRequest(requestDto, categoryName);
         return "Yeni müraciət yaradıldı";
     }
 
@@ -43,8 +42,16 @@ public class RequestController {
     @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
     public List<RequestResponse> getRequest() {
-        return requestService.getAllRequest();
+        return requestService.getRequest();
     }
+
+    @GetMapping("organization-requests")
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','GOVERMENT','SUPER_STAFF')")
+    @ResponseStatus(HttpStatus.OK)
+    public List<RequestResponse> getOrganizationRequest(@RequestParam String organizationName) {
+        return requestService.getOrganizationRequest(organizationName);
+    }
+
 
     @PutMapping("/{request_id}")
     @PreAuthorize("hasAuthority('USER')")
@@ -89,6 +96,6 @@ public class RequestController {
     @PreAuthorize("hasAnyAuthority('SUPER_STAFF','STAFF')")
     @ResponseStatus(HttpStatus.OK)
     public void updateStatus(@RequestParam(required = false) Status status, @PathVariable Long requestId) {
-        requestService.updateStatus(status,requestId);
+        requestService.updateStatus(status, requestId);
     }
 }

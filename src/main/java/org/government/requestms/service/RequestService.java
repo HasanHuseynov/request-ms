@@ -1,10 +1,7 @@
 package org.government.requestms.service;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.government.requestms.client.OrganizationServiceClient;
 import org.government.requestms.dto.request.RequestDto;
-import org.government.requestms.dto.response.OrganizationResponse;
 import org.government.requestms.dto.response.RequestResponse;
 import org.government.requestms.entity.Category;
 import org.government.requestms.entity.Request;
@@ -19,7 +16,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,24 +25,18 @@ public class RequestService {
     private final RequestRepository requestRepository;
     private final RequestMapper requestMapper;
     private final CategoryRepository categoryRepository;
-    private final OrganizationServiceClient organizationServiceClient;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
 
-    public void createRequest(RequestDto requestDto, String categoryName, String token) {
+    public void createRequest(RequestDto requestDto, String categoryName) {
         Category category = categoryRepository.findByCategoryName(categoryName)
                 .orElseThrow(() -> new RequestNotFoundException("Belə bir kateqoriya mövcud deyil"));
-        OrganizationResponse organizationResponse =
-                organizationServiceClient.getOrganizationByName(requestDto, token).getBody();
-
 
         Request requestEntity = requestMapper.mapToEntity(requestDto, categoryName);
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         requestEntity.setEmail(email);
         requestEntity.setCategory(category);
-        assert organizationResponse != null;
-        requestEntity.setOrganizationName(organizationResponse.getData().getName());
         requestRepository.save(requestEntity);
     }
 
@@ -133,6 +123,12 @@ public class RequestService {
         request.setStatus(status);
         requestRepository.save(request);
 
+    }
+
+    public List<RequestResponse> getOrganizationRequest(String organizationName) {
+        List<Request> requestList = requestRepository.findByOrganizationName(organizationName)
+                .orElse(Collections.emptyList());
+        return requestMapper.mapToDtoList(requestList);
     }
 }
 
