@@ -8,6 +8,9 @@ import org.government.requestms.dto.response.BaseResponse;
 import org.government.requestms.dto.response.RequestResponse;
 import org.government.requestms.enums.Status;
 import org.government.requestms.service.RequestService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,23 +36,33 @@ public class RequestController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public BaseResponse<List<RequestResponse>> getAllRequest() {
-        return BaseResponse.OK(requestService.getAllRequest());
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    public BaseResponse<List<RequestResponse>> getAllRequest( @RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size,
+                                                              @RequestParam(defaultValue = "createDate") String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        return BaseResponse.OK(requestService.getAllRequest(pageable));
     }
 
     @GetMapping("user-requests")
     @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<List<RequestResponse>> getRequest() {
-        return BaseResponse.OK(requestService.getRequest());
+    public BaseResponse<List<RequestResponse>> getRequest(@RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size,
+                                                          @RequestParam(defaultValue = "createDate") String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        return BaseResponse.OK(requestService.getRequest(pageable));
     }
 
     @GetMapping("organization-requests")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','GOVERMENT','SUPER_STAFF')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<List<RequestResponse>> getOrganizationRequest(@RequestParam String organizationName) {
-        return BaseResponse.OK(requestService.getOrganizationRequest(organizationName));
+    public BaseResponse<List<RequestResponse>> getOrganizationRequest(@RequestParam(defaultValue = "0") int page,
+                                                                      @RequestParam(defaultValue = "10") int size,
+                                                                      @RequestParam(defaultValue = "createDate") String sortBy,
+                                                                      @RequestParam String organizationName) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        return BaseResponse.OK(requestService.getOrganizationRequest(organizationName,pageable));
     }
 
 
@@ -88,8 +101,13 @@ public class RequestController {
     @GetMapping("/search")
     @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','GOVERMENT')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<List<RequestResponse>> searchRequests(@RequestParam String keyword) {
-        return BaseResponse.OK(requestService.searchRequests(keyword));
+    public BaseResponse<List<RequestResponse>> searchRequests(@RequestParam String keyword,
+                                                              @RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size,
+                                                              @RequestParam(defaultValue = "createDate") String sortBy
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        return BaseResponse.OK(requestService.searchRequests(pageable,keyword));
     }
 
     @PatchMapping("/update-status/{requestId}")
