@@ -9,6 +9,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class CategoryRequest {
-    @NotBlank(message = "kateqoriya adı boş ola bilməz")
+    @NotBlank(message = "Kateqoriya adı boş ola bilməz")
     private String categoryName;
 }
