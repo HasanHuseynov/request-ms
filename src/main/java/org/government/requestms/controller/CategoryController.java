@@ -28,7 +28,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<List<CategoryResponse>> getAllCategory() {
         return BaseResponse.OK(categoryService.getAllCategory());
