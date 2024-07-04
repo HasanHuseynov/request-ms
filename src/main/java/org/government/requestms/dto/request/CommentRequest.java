@@ -10,7 +10,7 @@ import org.government.requestms.entity.Request;
 @Getter
 @Setter
 public class CommentRequest {
-    @NotBlank(message = "mətn boş ola bilməz")
+    @NotBlank(message = "Mətn boş ola bilməz")
     @Size(min = 10, message = "Minimum 10 simvol istifadə olunmalıdır")
     @Size(max = 500, message = "Maksimum 500 simvol istifadə oluna bilər")
     private String commentText;
