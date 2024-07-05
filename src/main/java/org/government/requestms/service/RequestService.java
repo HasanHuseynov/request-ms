@@ -12,6 +12,8 @@ import org.government.requestms.repository.CategoryRepository;
 import org.government.requestms.repository.CommentRepository;
 import org.government.requestms.repository.LikeRepository;
 import org.government.requestms.repository.RequestRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -46,16 +48,18 @@ public class RequestService {
         requestRepository.save(requestEntity);
     }
 
-    public List<RequestResponse> getAllRequest() {
-        List<Request> requestList = requestRepository.findAll();
-        if (requestList.isEmpty()) {
+    public List<RequestResponse> getAllRequest(Pageable pageable) {
+        var requestPage = requestRepository.findAll(pageable);
+        if (requestPage.isEmpty()) {
             return Collections.emptyList();
         }
+        List<Request> requestList = requestPage.getContent();
         return getRequestResponses(requestList);
     }
 
-    public List<RequestResponse> searchRequests(String keyword) {
-        var requestList = requestRepository.findByDescriptionContaining(keyword);
+    public List<RequestResponse> searchRequests(Pageable pageable,String keyword) {
+        var requestPage = requestRepository.findByDescriptionContaining(keyword,pageable);
+        List<Request> requestList  = requestPage.getContent();
         return requestMapper.mapToDtoList(requestList);
     }
 
@@ -87,10 +91,12 @@ public class RequestService {
         }
     }
 
-    public List<RequestResponse> getRequest() {
+    public List<RequestResponse> getRequest(Pageable pageable) {
+
+
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Request> requestList = requestRepository.findByEmail(email)
-                .orElse(Collections.emptyList());
+        var requestPage = requestRepository.findByEmail(email,pageable);
+        List<Request> requestList = requestPage.getContent();
         return getRequestResponses(requestList);
     }
 
@@ -102,6 +108,7 @@ public class RequestService {
             response.setCommentCount(Math.toIntExact(commentCount));
             response.setLikeCount(Math.toIntExact(likeCount));
         });
+
         return responseList;
     }
 
@@ -131,10 +138,17 @@ public class RequestService {
 
     }
 
-    public List<RequestResponse> getOrganizationRequest(String organizationName) {
-        List<Request> requestList = requestRepository.findByOrganizationName(organizationName)
-                .orElse(Collections.emptyList());
+
+    public List<RequestResponse> getOrganizationRequest(String token,Pageable pageable) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        var organizationName = jwtService.extractOrganizationName(token);
+
+        Page<Request> requestPage = requestRepository.findByOrganizationName(organizationName,pageable);
+        List<Request> requestList = requestPage.getContent();
         return requestMapper.mapToDtoList(requestList);
     }
+
 }
 
