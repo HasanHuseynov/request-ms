@@ -3,6 +3,7 @@ package org.government.requestms.controller;
 import java.util.Base64;
 import java.util.List;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.government.requestms.dto.request.CommentRequest;
 import org.government.requestms.dto.request.CommentRequest;
@@ -54,8 +55,12 @@ public class CommentController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<BaseResponse<CommentResponse>> postComment(@RequestBody @Valid CommentRequest commentRequest, @RequestParam Long id) {
-        var response = commentService.assignCommentToRequest(id, commentRequest);
+    public ResponseEntity<BaseResponse<CommentResponse>> postComment(@RequestBody @Valid CommentRequest commentRequest,
+                                                                     @RequestParam Long id,
+                                                                     HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+
+        var response = commentService.assignCommentToRequest(id, commentRequest,token);
         return ResponseEntity.ok(BaseResponse.OK(response));
     }
 
