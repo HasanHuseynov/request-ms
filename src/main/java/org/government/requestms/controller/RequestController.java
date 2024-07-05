@@ -50,8 +50,9 @@ public class RequestController {
     @GetMapping("organization-requests")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','GOVERMENT','SUPER_STAFF')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<List<RequestResponse>> getOrganizationRequest(@RequestParam String organizationName) {
-        return BaseResponse.OK(requestService.getOrganizationRequest(organizationName));
+    public BaseResponse<List<RequestResponse>> getOrganizationRequest(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        return BaseResponse.OK(requestService.getOrganizationRequest(token));
     }
 
 

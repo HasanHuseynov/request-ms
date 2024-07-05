@@ -131,10 +131,16 @@ public class RequestService {
 
     }
 
-    public List<RequestResponse> getOrganizationRequest(String organizationName) {
+    public List<RequestResponse> getOrganizationRequest(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        var organizationName = jwtService.extractOrganizationName(token);
+
         List<Request> requestList = requestRepository.findByOrganizationName(organizationName)
                 .orElse(Collections.emptyList());
         return requestMapper.mapToDtoList(requestList);
     }
+
 }
 
