@@ -27,15 +27,21 @@ public class RequestService {
     private final CategoryRepository categoryRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
+    private final JWTService jwtService;
 
-    public void createRequest(RequestDto requestDto, String categoryName) {
+    public void createRequest(RequestDto requestDto, String categoryName, String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
         Category category = categoryRepository.findByCategoryName(categoryName)
                 .orElseThrow(() -> new DataNotFoundException("Belə bir kateqoriya mövcud deyil"));
 
         Request requestEntity = requestMapper.mapToEntity(requestDto, categoryName);
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        var fullName = jwtService.extractFullName(token);
         requestEntity.setEmail(email);
+        requestEntity.setFullName(fullName);
         requestEntity.setCategory(category);
         requestRepository.save(requestEntity);
     }

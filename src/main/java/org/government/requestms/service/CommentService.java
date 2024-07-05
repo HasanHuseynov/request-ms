@@ -1,5 +1,6 @@
 package org.government.requestms.service;
 
+import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.government.requestms.dto.request.CommentRequest;
@@ -13,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
     private final RequestRepository requestRepository;
+    private final JWTService jwtService;
 
     public List<CommentResponse> getAllComment() {
         List<Comment> commentEntities = commentRepository.findAll();
@@ -34,18 +37,35 @@ public class CommentService {
         return commentMapper.toDTO(commentEntity);
     }
 
-    public CommentResponse assignCommentToRequest(Long id, CommentRequest commentRequest) {
+    public CommentResponse assignCommentToRequest(Long id, CommentRequest commentRequest, String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
         var request = requestRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Request not found with username: " + id));
         var email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         var commentEntity = commentMapper.fromDTO(commentRequest);
-        commentEntity.setRequest(request);
+        var fullName = jwtService.extractFullName(token);
+
+        var organizationName = jwtService.extractOrganizationName(token);
+
+        List<String> authorities = jwtService.extractAuthorities(token);
+
+        if (authorities.contains("STAFF") || authorities.contains("SUPER_STAFF")) {
+            commentEntity.setFullName(organizationName);
+
+        } else {
+            commentEntity.setFullName(fullName);
+        }
         commentEntity.setEmail(email);
+        commentEntity.setRequest(request);
         commentEntity = commentRepository.save(commentEntity);
         return commentMapper.toDTO(commentEntity);
 
     }
+
 
     public void deleteComment(Long id) {
         Comment commentEntity = commentRepository.findById(id).orElseThrow(() -> {
