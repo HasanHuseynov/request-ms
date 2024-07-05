@@ -31,6 +31,9 @@ public class Request {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "full_name")
+    private String fullName;
+
     @Column(name = "organization_name")
     private String organizationName;
 

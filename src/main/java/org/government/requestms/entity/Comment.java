@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -33,6 +31,9 @@ public class Comment {
 
     @Column(name = "email")
     private String email;
+
+    @Column(name = "full_name")
+    private String fullName;
 
     @Column(name = "comment_text")
     private String commentText;

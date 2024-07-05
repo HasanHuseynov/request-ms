@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -66,6 +67,20 @@ public class JWTService {
                 .build()
                 .verify(token);
         return decodedJWT.getClaim("authorities").asList(String.class);
+    }
+
+    public String extractFullName(String token) {
+        DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(getSignKey().getEncoded()))
+                .build()
+                .verify(token);
+        return decodedJWT.getClaim("fullName").asString();
+    }
+
+    public String extractOrganizationName(String token) {
+        DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(getSignKey().getEncoded()))
+                .build()
+                .verify(token);
+        return decodedJWT.getClaim("organizationName").asString();
     }
 
 }

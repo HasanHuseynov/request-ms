@@ -12,8 +12,8 @@ import lombok.ToString;
 public class RequestDto {
 
     @NotBlank(message = "Address boş ola bilməz")
-    @Size(min = 10, message = "Minimum 5 simvol istifadə olunmalıdır")
-    @Size(max = 500, message = "Maksimum 150 simvol istifadə oluna bilər")
+    @Size(min = 5, message = "Ünvan minimum 5 simvoldan ibarət olmalıdır")
+    @Size(max = 150, message = "Ünvan maksimum 150 simvoldan ibarət olmalıdır")
     private String address;
 
     @NotBlank(message = "Müraciət boş ola bilməz")

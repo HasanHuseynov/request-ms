@@ -14,7 +14,9 @@ import java.util.List;
 @ToString
 public class RequestResponse {
     private Long requestId;
+    private String fullName;
     private String email;
+
     private String address;
     private String description;
     private Status status;
