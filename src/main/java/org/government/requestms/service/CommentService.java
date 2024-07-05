@@ -41,7 +41,6 @@ public class CommentService {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
-
         var request = requestRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Request not found with username: " + id));
         var email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -55,8 +54,10 @@ public class CommentService {
 
         if (authorities.contains("STAFF") || authorities.contains("SUPER_STAFF")) {
             commentEntity.setFullName(organizationName);
+            commentEntity.setAuthority("STAFF");
 
         } else {
+            commentEntity.setAuthority("USER");
             commentEntity.setFullName(fullName);
         }
         commentEntity.setEmail(email);

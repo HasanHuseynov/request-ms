@@ -93,6 +93,7 @@ public class RequestService {
 
     public List<RequestResponse> getRequest(Pageable pageable) {
 
+
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         var requestPage = requestRepository.findByEmail(email,pageable);
         List<Request> requestList = requestPage.getContent();
@@ -107,6 +108,7 @@ public class RequestService {
             response.setCommentCount(Math.toIntExact(commentCount));
             response.setLikeCount(Math.toIntExact(likeCount));
         });
+
         return responseList;
     }
 
@@ -136,17 +138,15 @@ public class RequestService {
 
     }
 
-    public List<RequestResponse> getOrganizationRequest(String organizationName,Pageable pageable) {
-        Page<Request> requestPage = requestRepository.findByOrganizationName(organizationName,pageable);
-        List<Request> requestList = requestPage.getContent();
-    public List<RequestResponse> getOrganizationRequest(String token) {
+
+    public List<RequestResponse> getOrganizationRequest(String token,Pageable pageable) {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
         var organizationName = jwtService.extractOrganizationName(token);
 
-        List<Request> requestList = requestRepository.findByOrganizationName(organizationName)
-                .orElse(Collections.emptyList());
+        Page<Request> requestPage = requestRepository.findByOrganizationName(organizationName,pageable);
+        List<Request> requestList = requestPage.getContent();
         return requestMapper.mapToDtoList(requestList);
     }
 

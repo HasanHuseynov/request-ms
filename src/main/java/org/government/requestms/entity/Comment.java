@@ -46,6 +46,9 @@ public class Comment {
     @CreatedBy
     private String createBy;
 
+    @Column(name = "authority")
+    private String authority;
+
     @Column(name = "last_modified")
     @LastModifiedDate
     private LocalDateTime lastModified;

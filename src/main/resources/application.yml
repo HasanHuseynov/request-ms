@@ -2,11 +2,11 @@ spring:
   application:
     name: request-ms
   datasource:
-    url: jdbc:postgresql://localhost:5432/request-db
-    username: postgres
-    password: 5253228432
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: hasan
+    password: hasan123
   jpa:
-#    show-sql: true
+    show-sql: true
     hibernate:
       ddl-auto: update
     properties:

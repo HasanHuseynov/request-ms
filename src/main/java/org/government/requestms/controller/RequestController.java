@@ -59,8 +59,13 @@ public class RequestController {
     @GetMapping("organization-requests")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','GOVERMENT','SUPER_STAFF')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<List<RequestResponse>> getOrganizationRequest(@RequestParam String organizationName) {
-        return BaseResponse.OK(requestService.getOrganizationRequest(organizationName));
+    public BaseResponse<List<RequestResponse>> getOrganizationRequest( @RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "10") int size,
+                                                                       @RequestParam(defaultValue = "createDate") String sortBy,
+                                                                       HttpServletRequest request) {
+        String token=request.getHeader("Authorization");
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        return BaseResponse.OK(requestService.getOrganizationRequest(token,pageable));
     }
 
 
