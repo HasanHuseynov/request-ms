@@ -5,13 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.government.requestms.entity.Request;
 
 @Getter
 @Setter
 public class CommentRequest {
-    @NotBlank(message = "Mətn boş ola bilməz")
-    @Size(min = 10, message = "Minimum 10 simvol istifadə olunmalıdır")
-    @Size(max = 500, message = "Maksimum 500 simvol istifadə oluna bilər")
+    @NotBlank(message = "Şərh boş ola bilməz")
+    @Size(max = 500, message = "Şərh maksimum 500 simvoldan ibarət ola bilər")
     private String commentText;
 }
