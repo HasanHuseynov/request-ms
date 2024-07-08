@@ -36,14 +36,14 @@ public class LikeController {
     }
 
     @DeleteMapping
-    public ResponseEntity<BaseResponse<String>> deleteLike(Long id) {
-        this.likeService.deleteLike(id);
+    public ResponseEntity<BaseResponse<String>> deleteLike(Long likeId) {
+        this.likeService.deleteLike(likeId);
         return ResponseEntity.ok(BaseResponse.message("Like deleted successfully!"));
     }
 
     @PostMapping("/post")
-    public ResponseEntity<BaseResponse<LikeResponse>> postLike(@RequestParam Long id) throws DataExistException {
-        var response = likeService.assignLikeToRequest(id);
+    public ResponseEntity<BaseResponse<LikeResponse>> postLike(@RequestParam Long requestId) throws DataExistException {
+        var response = likeService.assignLikeToRequest(requestId);
         return ResponseEntity.ok(BaseResponse.OK(response));
     }
 

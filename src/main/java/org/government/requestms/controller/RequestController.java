@@ -8,6 +8,7 @@ import org.government.requestms.dto.request.RequestDto;
 import org.government.requestms.dto.response.BaseResponse;
 import org.government.requestms.dto.response.RequestResponse;
 import org.government.requestms.enums.Status;
+import org.government.requestms.exception.DataExistException;
 import org.government.requestms.service.RequestService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,33 +40,32 @@ public class RequestController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public BaseResponse<List<RequestResponse>> getAllRequest( @RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "10") int size,
-                                                              @RequestParam(defaultValue = "createDate") String sortBy) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+    public BaseResponse<List<RequestResponse>> getAllRequest(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").ascending());
         return BaseResponse.OK(requestService.getAllRequest(pageable));
     }
 
     @GetMapping("user-requests")
     @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<List<RequestResponse>> getRequest(@RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "10") int size,
-                                                          @RequestParam(defaultValue = "createDate") String sortBy) {
+    public BaseResponse<List<RequestResponse>> getUserRequest(@RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size,
+                                                              @RequestParam(defaultValue = "createDate") String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-        return BaseResponse.OK(requestService.getRequest(pageable));
+        return BaseResponse.OK(requestService.getUserRequest(pageable));
     }
 
     @GetMapping("organization-requests")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','GOVERMENT','SUPER_STAFF')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<List<RequestResponse>> getOrganizationRequest( @RequestParam(defaultValue = "0") int page,
-                                                                       @RequestParam(defaultValue = "10") int size,
-                                                                       @RequestParam(defaultValue = "createDate") String sortBy,
-                                                                       HttpServletRequest request) {
-        String token=request.getHeader("Authorization");
+    public BaseResponse<List<RequestResponse>> getOrganizationRequest(@RequestParam(defaultValue = "0") int page,
+                                                                      @RequestParam(defaultValue = "10") int size,
+                                                                      @RequestParam(defaultValue = "createDate") String sortBy,
+                                                                      HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-        return BaseResponse.OK(requestService.getOrganizationRequest(token,pageable));
+        return BaseResponse.OK(requestService.getOrganizationRequest(token, pageable));
     }
 
 
@@ -82,7 +82,7 @@ public class RequestController {
     @DeleteMapping("/{request_id}")
     @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<String> deleteRequest(@PathVariable Long request_id) {
+    public BaseResponse<String> deleteRequest(@PathVariable Long request_id) throws DataExistException {
         requestService.deleteRequest(request_id);
         return BaseResponse.message("Müraciətiniz silindi");
 
@@ -106,11 +106,10 @@ public class RequestController {
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<List<RequestResponse>> searchRequests(@RequestParam String keyword,
                                                               @RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "10") int size,
-                                                              @RequestParam(defaultValue = "createDate") String sortBy
+                                                              @RequestParam(defaultValue = "10") int size
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-        return BaseResponse.OK(requestService.searchRequests(pageable,keyword));
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").ascending());
+        return BaseResponse.OK(requestService.searchRequests(pageable, keyword));
     }
 
     @PatchMapping("/update-status/{requestId}")
