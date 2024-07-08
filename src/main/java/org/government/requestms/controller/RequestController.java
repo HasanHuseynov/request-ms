@@ -41,9 +41,8 @@ public class RequestController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public BaseResponse<List<RequestResponse>> getAllRequest( @RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "10") int size,
-                                                              @RequestParam(defaultValue = "createDate") String sortBy) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+                                                              @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").ascending());
         return BaseResponse.OK(requestService.getAllRequest(pageable));
     }
 
