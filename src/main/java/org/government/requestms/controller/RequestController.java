@@ -40,8 +40,8 @@ public class RequestController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public BaseResponse<List<RequestResponse>> getAllRequest( @RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "10") int size) {
+    public BaseResponse<List<RequestResponse>> getAllRequest(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").ascending());
         return BaseResponse.OK(requestService.getAllRequest(pageable));
     }
@@ -59,13 +59,13 @@ public class RequestController {
     @GetMapping("organization-requests")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','GOVERMENT','SUPER_STAFF')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<List<RequestResponse>> getOrganizationRequest( @RequestParam(defaultValue = "0") int page,
-                                                                       @RequestParam(defaultValue = "10") int size,
-                                                                       @RequestParam(defaultValue = "createDate") String sortBy,
-                                                                       HttpServletRequest request) {
-        String token=request.getHeader("Authorization");
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").ascending());
-        return BaseResponse.OK(requestService.getOrganizationRequest(token,pageable));
+    public BaseResponse<List<RequestResponse>> getOrganizationRequest(@RequestParam(defaultValue = "0") int page,
+                                                                      @RequestParam(defaultValue = "10") int size,
+                                                                      @RequestParam(defaultValue = "createDate") String sortBy,
+                                                                      HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        return BaseResponse.OK(requestService.getOrganizationRequest(token, pageable));
     }
 
 
@@ -109,7 +109,7 @@ public class RequestController {
                                                               @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").ascending());
-        return BaseResponse.OK(requestService.searchRequests(pageable,keyword));
+        return BaseResponse.OK(requestService.searchRequests(pageable, keyword));
     }
 
     @PatchMapping("/update-status/{requestId}")
