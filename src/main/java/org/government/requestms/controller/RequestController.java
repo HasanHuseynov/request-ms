@@ -8,6 +8,7 @@ import org.government.requestms.dto.request.RequestDto;
 import org.government.requestms.dto.response.BaseResponse;
 import org.government.requestms.dto.response.RequestResponse;
 import org.government.requestms.enums.Status;
+import org.government.requestms.exception.DataExistException;
 import org.government.requestms.service.RequestService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,11 +50,11 @@ public class RequestController {
     @GetMapping("user-requests")
     @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<List<RequestResponse>> getRequest(@RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "10") int size,
-                                                          @RequestParam(defaultValue = "createDate") String sortBy) {
+    public BaseResponse<List<RequestResponse>> getUserRequest(@RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size,
+                                                              @RequestParam(defaultValue = "createDate") String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-        return BaseResponse.OK(requestService.getRequest(pageable));
+        return BaseResponse.OK(requestService.getUserRequest(pageable));
     }
 
     @GetMapping("organization-requests")
@@ -82,7 +83,7 @@ public class RequestController {
     @DeleteMapping("/{request_id}")
     @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<String> deleteRequest(@PathVariable Long request_id) {
+    public BaseResponse<String> deleteRequest(@PathVariable Long request_id) throws DataExistException {
         requestService.deleteRequest(request_id);
         return BaseResponse.message("Müraciətiniz silindi");
 
