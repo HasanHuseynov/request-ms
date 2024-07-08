@@ -1,6 +1,5 @@
 package org.government.requestms.service;
 
-import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.government.requestms.dto.request.CommentRequest;
@@ -14,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -37,13 +35,16 @@ public class CommentService {
         return commentMapper.toDTO(commentEntity);
     }
 
-    public CommentResponse assignCommentToRequest(Long id, CommentRequest commentRequest, String token) {
+    public CommentResponse assignCommentToRequest(Long requestId, CommentRequest commentRequest, String token) {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
-        var request = requestRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Request not found with username: " + id));
+        var request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new DataNotFoundException("Request not found with username: " + requestId));
         var email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Long commentCount = commentRepository.countByRequest(requestRepository.getReferenceById(request.getRequestId()));
+
 
         var commentEntity = commentMapper.fromDTO(commentRequest);
         var fullName = jwtService.extractFullName(token);
@@ -63,7 +64,9 @@ public class CommentService {
         commentEntity.setEmail(email);
         commentEntity.setRequest(request);
         commentEntity = commentRepository.save(commentEntity);
-        return commentMapper.toDTO(commentEntity);
+        CommentResponse response = commentMapper.toDTO(commentEntity);
+        response.setCommentCount(Math.toIntExact(commentCount + 1));
+        return response;
 
     }
 

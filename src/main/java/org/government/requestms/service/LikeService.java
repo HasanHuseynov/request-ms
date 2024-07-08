@@ -39,27 +39,29 @@ public class LikeService {
     }
 
 
-    public LikeResponse assignLikeToRequest(Long id) throws DataExistException {
+    public LikeResponse assignLikeToRequest(Long requestId) throws DataExistException {
         var name = SecurityContextHolder.getContext().getAuthentication().getName();
-        var request = requestRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Request not found with username: " + id));
+        var request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new DataNotFoundException("Request not found with username: " + requestId));
 
-        if (likeRepository.existsByRequest_RequestIdAndEmail(id, name)) {
+        if (likeRepository.existsByRequest_RequestIdAndEmail(requestId, name)) {
             throw new DataExistException("Bu müraciətə artıq like vermisiz");
         }
+        Long likeCount = likeRepository.countByRequest(requestRepository.getReferenceById(request.getRequestId()));
 
         var likeEntity = new Like();
         likeEntity.setEmail(name);
         likeEntity.setRequest(request);
         likeRepository.save(likeEntity);
-        return likeMapper.toDTO(likeEntity);
-
+        LikeResponse likeResponse = likeMapper.toDTO(likeEntity);
+        likeResponse.setLikeCount(Math.toIntExact(likeCount+1));
+        return likeResponse;
     }
 
 
-    public void deleteLike(Long id) {
-        Like likeEntity = (Like) this.likeRepository.findById(id).orElseThrow(() -> {
-            return new DataNotFoundException("Like not found with id: " + id);
+    public void deleteLike(Long likeId) {
+        Like likeEntity = (Like) this.likeRepository.findById(likeId).orElseThrow(() -> {
+            return new DataNotFoundException("Like not found with likeId: " + likeId);
         });
         log.info("Deleted the like with details:" + likeEntity.toString());
         this.likeRepository.delete(likeEntity);

@@ -6,6 +6,7 @@ import org.government.requestms.dto.response.RequestResponse;
 import org.government.requestms.entity.Category;
 import org.government.requestms.entity.Request;
 import org.government.requestms.enums.Status;
+import org.government.requestms.exception.DataExistException;
 import org.government.requestms.exception.DataNotFoundException;
 import org.government.requestms.mapper.RequestMapper;
 import org.government.requestms.repository.CategoryRepository;
@@ -15,9 +16,11 @@ import org.government.requestms.repository.RequestRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,9 +60,9 @@ public class RequestService {
         return getRequestResponses(requestList);
     }
 
-    public List<RequestResponse> searchRequests(Pageable pageable,String keyword) {
-        var requestPage = requestRepository.findByDescriptionContaining(keyword,pageable);
-        List<Request> requestList  = requestPage.getContent();
+    public List<RequestResponse> searchRequests(Pageable pageable, String keyword) {
+        var requestPage = requestRepository.findByDescriptionContaining(keyword, pageable);
+        List<Request> requestList = requestPage.getContent();
         return requestMapper.mapToDtoList(requestList);
     }
 
@@ -91,11 +94,10 @@ public class RequestService {
         }
     }
 
-    public List<RequestResponse> getRequest(Pageable pageable) {
-
+    public List<RequestResponse> getUserRequest(Pageable pageable) {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        var requestPage = requestRepository.findByEmail(email,pageable);
+        var requestPage = requestRepository.findByEmail(email, pageable);
         List<Request> requestList = requestPage.getContent();
         return getRequestResponses(requestList);
     }
@@ -124,10 +126,14 @@ public class RequestService {
         requestRepository.save(updateRequest);
     }
 
-    public void deleteRequest(Long requestId) {
+    public void deleteRequest(Long requestId) throws DataExistException {
         Request requestEntity = requestRepository.findById(requestId)
                 .orElseThrow(() -> new DataNotFoundException("Müraciət tapılmadı"));
-        requestRepository.delete(requestEntity);
+        if (requestEntity.getStatus() == Status.Göndərildi) {
+            requestRepository.delete(requestEntity);
+        } else
+            throw new DataExistException("Müraciətin statusu dəyişdiyi üçün silmə əməliiyyatı etmək mümkün olmayacaq");
+
     }
 
     public void updateStatus(Status status, Long requestId) {
@@ -138,17 +144,43 @@ public class RequestService {
 
     }
 
+    @Scheduled(fixedRate = 86400000)
+    public void processChangeStatusForTime() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime dateTime = now.minusDays(60);
 
-    public List<RequestResponse> getOrganizationRequest(String token,Pageable pageable) {
+        List<Request> requests = requestRepository.findByStatusNotAndCreateDateBefore(Status.Arxivdədir, dateTime);
+
+        requests.forEach(request -> {
+            LocalDateTime lastModified = request.getLastModified();
+            LocalDateTime createDate = request.getCreateDate();
+
+            if (lastModified == null) {
+                if (createDate.isBefore(dateTime)) {
+                    request.setStatus(Status.Arxivdədir);
+                    requestRepository.save(request);
+                }
+            } else {
+                if (lastModified.isBefore(dateTime)) {
+                    request.setStatus(Status.Arxivdədir);
+                    requestRepository.save(request);
+                }
+            }
+        });
+    }
+
+
+    public List<RequestResponse> getOrganizationRequest(String token, Pageable pageable) {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
         var organizationName = jwtService.extractOrganizationName(token);
 
-        Page<Request> requestPage = requestRepository.findByOrganizationName(organizationName,pageable);
+        Page<Request> requestPage = requestRepository.findByOrganizationName(organizationName, pageable);
         List<Request> requestList = requestPage.getContent();
         return requestMapper.mapToDtoList(requestList);
     }
+
 
 }
 
