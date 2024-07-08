@@ -16,7 +16,6 @@ spring:
 swagger-ui:
   path: /swagger-ui.html
   enabled: true
-
 server:
   port: ${PORT:8082}
 

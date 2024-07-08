@@ -59,7 +59,6 @@ public class CommentController {
                                                                      @RequestParam Long id,
                                                                      HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-
         var response = commentService.assignCommentToRequest(id, commentRequest,token);
         return ResponseEntity.ok(BaseResponse.OK(response));
     }
