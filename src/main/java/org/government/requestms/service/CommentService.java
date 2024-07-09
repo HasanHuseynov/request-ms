@@ -9,6 +9,7 @@ import org.government.requestms.exception.DataNotFoundException;
 import org.government.requestms.mapper.CommentMapper;
 import org.government.requestms.repository.CommentRepository;
 import org.government.requestms.repository.RequestRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,17 @@ public class CommentService {
         }
         List<Comment> commentList = commentEntities.getContent();
         return commentMapper.toDTOs(commentList);
+    }
+
+    public List<CommentResponse> getOrganizationComment(Pageable pageable, String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        var organizationName = jwtService.extractOrganizationName(token);
+        Page<Comment> commentPage = commentRepository.findByFullName(organizationName, pageable);
+        List<Comment> commentList = commentPage.getContent();
+        return commentMapper.toDTOs(commentList);
+
     }
 
     public CommentResponse createNewComment(CommentRequest commentRequest) {
@@ -88,4 +100,5 @@ public class CommentService {
         commentMapper.mapUpdateRequestToEntity(commentEntity, commentRequest);
         commentRepository.save(commentEntity);
     }
+
 }
