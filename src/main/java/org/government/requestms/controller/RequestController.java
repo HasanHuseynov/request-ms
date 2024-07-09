@@ -40,8 +40,8 @@ public class RequestController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public BaseResponse<List<RequestResponse>> getAllRequest( @RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "10") int size) {
+    public BaseResponse<List<RequestResponse>> getAllRequest(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").ascending());
         return BaseResponse.OK(requestService.getAllRequest(pageable));
     }
@@ -56,16 +56,23 @@ public class RequestController {
         return BaseResponse.OK(requestService.getUserRequest(pageable));
     }
 
+    @GetMapping("by-id/{requestId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','GOVERMENT','SUPER_STAFF','USER')")
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse<RequestResponse> getRequestById(@PathVariable Long requestId) {
+        return BaseResponse.OK(requestService.getRequestById(requestId));
+    }
+
     @GetMapping("organization-requests")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','GOVERMENT','SUPER_STAFF')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<List<RequestResponse>> getOrganizationRequest( @RequestParam(defaultValue = "0") int page,
-                                                                       @RequestParam(defaultValue = "10") int size,
-                                                                       @RequestParam(defaultValue = "createDate") String sortBy,
-                                                                       HttpServletRequest request) {
-        String token=request.getHeader("Authorization");
+    public BaseResponse<List<RequestResponse>> getOrganizationRequest(@RequestParam(defaultValue = "0") int page,
+                                                                      @RequestParam(defaultValue = "10") int size,
+                                                                      @RequestParam(defaultValue = "createDate") String sortBy,
+                                                                      HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-        return BaseResponse.OK(requestService.getOrganizationRequest(token,pageable));
+        return BaseResponse.OK(requestService.getOrganizationRequest(token, pageable));
     }
 
 
@@ -110,13 +117,13 @@ public class RequestController {
                                                               @RequestParam(defaultValue = "createDate") String sortBy
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
-        return BaseResponse.OK(requestService.searchRequests(pageable,keyword));
+        return BaseResponse.OK(requestService.searchRequests(pageable, keyword));
     }
 
     @PatchMapping("/update-status/{requestId}")
     @PreAuthorize("hasAnyAuthority('SUPER_STAFF','STAFF')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<String> updateStatus(@RequestParam(required = false) Status status, @PathVariable Long requestId) {
+    public BaseResponse<String> updateStatus(@RequestParam(required = false) Status status, @PathVariable Long requestId) throws DataExistException {
         requestService.updateStatus(status, requestId);
         return BaseResponse.message("Status yeniləndi");
     }
