@@ -18,7 +18,7 @@ public abstract class RequestMapper {
     public abstract Request mapToEntity(RequestDto requestDto, String categoryName);
 
     public Status createStatus() {
-        return Status.Göndərildi;
+        return Status.Gözləmədə;
 
     }
 
@@ -28,4 +28,6 @@ public abstract class RequestMapper {
                                               String categoryName);
 
     public abstract List<RequestResponse> mapToDtoList(List<Request> requestList);
+
+    public abstract RequestResponse mapToDto(Request request);
 }

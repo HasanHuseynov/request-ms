@@ -56,6 +56,13 @@ public class RequestController {
         return BaseResponse.OK(requestService.getUserRequest(pageable));
     }
 
+    @GetMapping("by-id/{requestId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','GOVERMENT','SUPER_STAFF','USER')")
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse<RequestResponse> getRequestById(@PathVariable Long requestId) {
+        return BaseResponse.OK(requestService.getRequestById(requestId));
+    }
+
     @GetMapping("organization-requests")
     @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','GOVERMENT','SUPER_STAFF')")
     @ResponseStatus(HttpStatus.OK)
@@ -106,16 +113,17 @@ public class RequestController {
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<List<RequestResponse>> searchRequests(@RequestParam String keyword,
                                                               @RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "10") int size
+                                                              @RequestParam(defaultValue = "10") int size,
+                                                              @RequestParam(defaultValue = "createDate") String sortBy
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").ascending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         return BaseResponse.OK(requestService.searchRequests(pageable, keyword));
     }
 
     @PatchMapping("/update-status/{requestId}")
     @PreAuthorize("hasAnyAuthority('SUPER_STAFF','STAFF')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<String> updateStatus(@RequestParam(required = false) Status status, @PathVariable Long requestId) {
+    public BaseResponse<String> updateStatus(@RequestParam(required = false) Status status, @PathVariable Long requestId) throws DataExistException {
         requestService.updateStatus(status, requestId);
         return BaseResponse.message("Status yeniləndi");
     }

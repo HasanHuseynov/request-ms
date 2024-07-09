@@ -1,7 +1,7 @@
 package org.government.requestms.enums;
 
 public enum Status {
-    Göndərildi,
+    Gözləmədə,
     Baxılır,
     Əssasızdır,
     Həlledildi,
