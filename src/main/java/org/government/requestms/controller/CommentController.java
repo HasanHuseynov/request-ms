@@ -10,6 +10,9 @@ import org.government.requestms.dto.response.CommentResponse;
 import org.government.requestms.service.CommentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,8 +31,11 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
-    public ResponseEntity<BaseResponse<List<CommentResponse>>> getAllComments() {
-        return ResponseEntity.ok(BaseResponse.OK(commentService.getAllComment()));
+    public ResponseEntity<BaseResponse<List<CommentResponse>>> getAllComments(@RequestParam(defaultValue = "0") int page,
+                                                                              @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
+
+        return ResponseEntity.ok(BaseResponse.OK(commentService.getAllComment(pageable)));
     }
 
     @PostMapping
@@ -57,7 +63,7 @@ public class CommentController {
                                                                      HttpServletRequest request) {
         String token = request.getHeader("Authorization");
 
-        var response = commentService.assignCommentToRequest(requestId, commentRequest,token);
+        var response = commentService.assignCommentToRequest(requestId, commentRequest, token);
         return ResponseEntity.ok(BaseResponse.OK(response));
     }
 
