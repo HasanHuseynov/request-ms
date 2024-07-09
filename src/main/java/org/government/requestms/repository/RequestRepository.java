@@ -20,7 +20,6 @@ public interface RequestRepository extends JpaRepository<Request, Long>, JpaSpec
 
     Page<Request> findByOrganizationName(String organizationName, Pageable pageable);
 
-    List<Request> findByStatusNotAndCreateDateBefore(Status status, LocalDateTime createDate);
-
+    List<Request> findByStatusInAndLastModifiedBefore(List<Status> status, LocalDateTime lastModified);
 
 }

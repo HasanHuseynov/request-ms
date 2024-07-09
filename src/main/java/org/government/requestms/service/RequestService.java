@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -129,42 +130,37 @@ public class RequestService {
     public void deleteRequest(Long requestId) throws DataExistException {
         Request requestEntity = requestRepository.findById(requestId)
                 .orElseThrow(() -> new DataNotFoundException("Müraciət tapılmadı"));
-        if (requestEntity.getStatus() == Status.Göndərildi) {
+        if (requestEntity.getStatus() == Status.Gözləmədə) {
             requestRepository.delete(requestEntity);
         } else
             throw new DataExistException("Müraciətin statusu dəyişdiyi üçün silmə əməliiyyatı etmək mümkün olmayacaq");
 
     }
 
-    public void updateStatus(Status status, Long requestId) {
+    public void updateStatus(Status status, Long requestId) throws DataExistException {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new DataNotFoundException("Status tapılmadı"));
-        request.setStatus(status);
-        requestRepository.save(request);
+        if (!request.getStatus().equals(Status.Arxivdədir)) {
+            request.setStatus(status);
+            requestRepository.save(request);
+        } else throw new DataExistException("Arxiv statusu dəyişilə bilməz");
 
     }
 
     @Scheduled(fixedRate = 86400000)
     public void processChangeStatusForTime() {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime dateTime = now.minusDays(60);
+        LocalDateTime dateTime = now.minusDays(30);
 
-        List<Request> requests = requestRepository.findByStatusNotAndCreateDateBefore(Status.Arxivdədir, dateTime);
+        List<Status> statusList = Arrays.asList(Status.Əssasızdır, Status.Həlledildi);
+
+        List<Request> requests = requestRepository.findByStatusInAndLastModifiedBefore(statusList, dateTime);
 
         requests.forEach(request -> {
             LocalDateTime lastModified = request.getLastModified();
-            LocalDateTime createDate = request.getCreateDate();
-
-            if (lastModified == null) {
-                if (createDate.isBefore(dateTime)) {
-                    request.setStatus(Status.Arxivdədir);
-                    requestRepository.save(request);
-                }
-            } else {
-                if (lastModified.isBefore(dateTime)) {
-                    request.setStatus(Status.Arxivdədir);
-                    requestRepository.save(request);
-                }
+            if (lastModified.isBefore(dateTime)) {
+                request.setStatus(Status.Arxivdədir);
+                requestRepository.save(request);
             }
         });
     }
@@ -182,5 +178,10 @@ public class RequestService {
     }
 
 
+    public RequestResponse getRequestById(Long requestId) {
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new DataNotFoundException("Müraciət tapılmadı"));
+        return requestMapper.mapToDto(request);
+    }
 }
 
