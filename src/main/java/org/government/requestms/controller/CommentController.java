@@ -31,11 +31,23 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<BaseResponse<List<CommentResponse>>> getAllComments(@RequestParam(defaultValue = "0") int page,
                                                                               @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
 
         return ResponseEntity.ok(BaseResponse.OK(commentService.getAllComment(pageable)));
+    }
+
+    @GetMapping("organization-comments")
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','GOVERMENT','SUPER_STAFF')")
+    public ResponseEntity<BaseResponse<List<CommentResponse>>> getOrganizationComment(@RequestParam(defaultValue = "0") int page,
+                                                                                      @RequestParam(defaultValue = "10") int size,
+                                                                                      HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
+
+        return ResponseEntity.ok(BaseResponse.OK(commentService.getOrganizationComment(pageable, token)));
     }
 
     @PostMapping
