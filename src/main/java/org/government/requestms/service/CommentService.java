@@ -9,9 +9,12 @@ import org.government.requestms.exception.DataNotFoundException;
 import org.government.requestms.mapper.CommentMapper;
 import org.government.requestms.repository.CommentRepository;
 import org.government.requestms.repository.RequestRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -23,9 +26,13 @@ public class CommentService {
     private final RequestRepository requestRepository;
     private final JWTService jwtService;
 
-    public List<CommentResponse> getAllComment() {
-        List<Comment> commentEntities = commentRepository.findAll();
-        return commentMapper.toDTOs(commentEntities);
+    public List<CommentResponse> getAllComment(Pageable pageable) {
+        var commentEntities = commentRepository.findAll(pageable);
+        if (commentEntities.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Comment> commentList = commentEntities.getContent();
+        return commentMapper.toDTOs(commentList);
     }
 
     public CommentResponse createNewComment(CommentRequest commentRequest) {
