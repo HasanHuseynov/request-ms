@@ -14,8 +14,6 @@ public class CommentResponse {
 
     private String fullName;
     private String email;
-    private Integer commentCount;
-
 
     private String authority;
 
