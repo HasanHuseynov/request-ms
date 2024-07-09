@@ -50,9 +50,6 @@ public class CommentService {
                 .orElseThrow(() -> new DataNotFoundException("Request not found with username: " + requestId));
         var email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Long commentCount = commentRepository.countByRequest(requestRepository.getReferenceById(request.getRequestId()));
-
-
         var commentEntity = commentMapper.fromDTO(commentRequest);
         var fullName = jwtService.extractFullName(token);
 
@@ -71,9 +68,7 @@ public class CommentService {
         commentEntity.setEmail(email);
         commentEntity.setRequest(request);
         commentEntity = commentRepository.save(commentEntity);
-        CommentResponse response = commentMapper.toDTO(commentEntity);
-        response.setCommentCount(Math.toIntExact(commentCount + 1));
-        return response;
+        return commentMapper.toDTO(commentEntity);
 
     }
 
