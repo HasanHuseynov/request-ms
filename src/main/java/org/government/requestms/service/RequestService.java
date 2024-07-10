@@ -96,7 +96,6 @@ public class RequestService {
     }
 
     public List<RequestResponse> getUserRequest(Pageable pageable) {
-
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         var requestPage = requestRepository.findByEmail(email, pageable);
         List<Request> requestList = requestPage.getContent();

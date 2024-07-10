@@ -9,6 +9,7 @@ import org.government.requestms.exception.DataNotFoundException;
 import org.government.requestms.mapper.CommentMapper;
 import org.government.requestms.repository.CommentRepository;
 import org.government.requestms.repository.RequestRepository;
+import org.hibernate.annotations.Comments;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -83,6 +84,13 @@ public class CommentService {
         return commentMapper.toDTO(commentEntity);
 
     }
+
+    public List<CommentResponse> getCommentByRequest(Long id){
+        var commentsEntity = commentRepository.findByRequest_RequestId(id);
+        return commentMapper.toDTOs(commentsEntity);
+    }
+
+
 
 
     public void deleteComment(Long id) {
