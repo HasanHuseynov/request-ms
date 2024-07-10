@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.RequestDto;
 import org.government.requestms.dto.response.RequestResponse;
 import org.government.requestms.entity.Category;
+import org.government.requestms.entity.Like;
 import org.government.requestms.entity.Request;
 import org.government.requestms.enums.Status;
 import org.government.requestms.exception.DataExistException;
@@ -24,6 +25,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -64,7 +67,7 @@ public class RequestService {
     public List<RequestResponse> searchRequests(Pageable pageable, String keyword) {
         var requestPage = requestRepository.findByDescriptionContaining(keyword, pageable);
         List<Request> requestList = requestPage.getContent();
-        return requestMapper.mapToDtoList(requestList);
+        return getRequestResponses(requestList);
     }
 
     public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName, String days) {
@@ -91,7 +94,7 @@ public class RequestService {
                 spec = RequestSpecification.isCreatedWithinLast30Days();
             }
 
-            return requestMapper.mapToDtoList(requestRepository.findAll(spec));
+            return getRequestResponses(requestRepository.findAll(spec));
         }
     }
 
@@ -103,12 +106,20 @@ public class RequestService {
     }
 
     private List<RequestResponse> getRequestResponses(List<Request> requestList) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Like> likes = likeRepository.findByEmail(email);
+        Set<Long> likedRequestIds = likes.stream()
+                .map(like -> like.getRequest().getRequestId())
+                .collect(Collectors.toSet());
+
         List<RequestResponse> responseList = requestMapper.mapToDtoList(requestList);
         responseList.forEach(response -> {
             Long commentCount = commentRepository.countByRequest(requestRepository.getReferenceById(response.getRequestId()));
             Long likeCount = likeRepository.countByRequest(requestRepository.getReferenceById(response.getRequestId()));
             response.setCommentCount(Math.toIntExact(commentCount));
             response.setLikeCount(Math.toIntExact(likeCount));
+            response.setLikeSuccess(likedRequestIds.contains(response.getRequestId()));
+
         });
 
         return responseList;
@@ -180,7 +191,23 @@ public class RequestService {
     public RequestResponse getRequestById(Long requestId) {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new DataNotFoundException("Müraciət tapılmadı"));
-        return requestMapper.mapToDto(request);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Like> likes = likeRepository.findByEmail(email);
+
+        Set<Long> likedRequestIds = likes.stream()
+                .map(like -> like.getRequest().getRequestId())
+                .collect(Collectors.toSet());
+        RequestResponse response = requestMapper.mapToDto(request);
+
+        Long commentCount = commentRepository.countByRequest(request);
+        Long likeCount = likeRepository.countByRequest(request);
+
+        response.setCommentCount(Math.toIntExact(commentCount));
+        response.setLikeCount(Math.toIntExact(likeCount));
+        response.setLikeSuccess(likedRequestIds.contains(request.getRequestId()));
+
+        return response;
     }
 }
+
 

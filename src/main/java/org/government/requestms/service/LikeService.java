@@ -39,7 +39,7 @@ public class LikeService {
     }
 
 
-    public LikeResponse assignLikeToRequest(Long requestId) throws DataExistException {
+    public void assignLikeToRequest(Long requestId) throws DataExistException {
         var name = SecurityContextHolder.getContext().getAuthentication().getName();
         var request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new DataNotFoundException("Request not found with username: " + requestId));
@@ -47,15 +47,11 @@ public class LikeService {
         if (likeRepository.existsByRequest_RequestIdAndEmail(requestId, name)) {
             throw new DataExistException("Bu müraciətə artıq like vermisiz");
         }
-        Long likeCount = likeRepository.countByRequest(requestRepository.getReferenceById(request.getRequestId()));
-
         var likeEntity = new Like();
         likeEntity.setEmail(name);
         likeEntity.setRequest(request);
         likeRepository.save(likeEntity);
-        LikeResponse likeResponse = likeMapper.toDTO(likeEntity);
-        likeResponse.setLikeCount(Math.toIntExact(likeCount+1));
-        return likeResponse;
+
     }
 
 
