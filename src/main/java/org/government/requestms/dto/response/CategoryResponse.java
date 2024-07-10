@@ -15,10 +15,5 @@ public class CategoryResponse {
 
     private String categoryName;
 
-    @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime createDate;
-
-    @JsonFormat(pattern="dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime lastModified;
 
 }
