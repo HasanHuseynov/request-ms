@@ -67,10 +67,9 @@ public class RequestController {
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<List<RequestResponse>> getOrganizationRequest(@RequestParam(defaultValue = "0") int page,
                                                                       @RequestParam(defaultValue = "10") int size,
-                                                                      @RequestParam(defaultValue = "createDate") String sortBy,
                                                                       HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
         return BaseResponse.OK(requestService.getOrganizationRequest(token, pageable));
     }
 
@@ -112,10 +111,9 @@ public class RequestController {
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<List<RequestResponse>> searchRequests(@RequestParam String keyword,
                                                               @RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "10") int size,
-                                                              @RequestParam(defaultValue = "createDate") String sortBy
+                                                              @RequestParam(defaultValue = "10") int size
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
         return BaseResponse.OK(requestService.searchRequests(pageable, keyword));
     }
 
