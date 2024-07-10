@@ -55,12 +55,11 @@ public class LikeService {
     }
 
 
-    public void deleteLike(Long likeId) {
-        Like likeEntity = (Like) this.likeRepository.findById(likeId).orElseThrow(() -> {
-            return new DataNotFoundException("Like not found with likeId: " + likeId);
-        });
+    public void deleteLike(Long requestId) {
+        Like likeEntity = likeRepository.findByRequest_RequestId(requestId).
+                orElseThrow(() -> new DataNotFoundException("Like not found with likeId: " + requestId));
         log.info("Deleted the like with details:" + likeEntity.toString());
-        this.likeRepository.delete(likeEntity);
+        likeRepository.delete(likeEntity);
     }
 
     public void updateLike(Long id, LikeRequest likeRequest) {

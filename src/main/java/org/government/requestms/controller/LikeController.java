@@ -36,8 +36,8 @@ public class LikeController {
     }
 
     @DeleteMapping
-    public ResponseEntity<BaseResponse<String>> deleteLike(Long likeId) {
-        this.likeService.deleteLike(likeId);
+    public ResponseEntity<BaseResponse<String>> deleteLike(Long requestId) {
+        likeService.deleteLike(requestId);
         return ResponseEntity.ok(BaseResponse.message("Like deleted successfully!"));
     }
 
