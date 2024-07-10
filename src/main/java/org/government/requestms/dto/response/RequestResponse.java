@@ -15,8 +15,6 @@ import java.util.List;
 public class RequestResponse {
     private Long requestId;
     private String fullName;
-    private String email;
-
     private String address;
     private String description;
     private Status status;
@@ -24,9 +22,6 @@ public class RequestResponse {
 
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime createDate;
-
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
-    private LocalDateTime lastModified;
 
     private Integer commentCount;
 
