@@ -31,9 +31,7 @@ public class RequestResponse {
     private Integer commentCount;
 
     private Integer likeCount;
+    private boolean likeSuccess;
 
-    private List<LikeResponse> like;
-
-    private List<CommentResponse> comment;
     private CategoryResponse category;
 }

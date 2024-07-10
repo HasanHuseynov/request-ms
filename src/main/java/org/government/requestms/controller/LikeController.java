@@ -42,9 +42,9 @@ public class LikeController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<BaseResponse<LikeResponse>> postLike(@RequestParam Long requestId) throws DataExistException {
-        var response = likeService.assignLikeToRequest(requestId);
-        return ResponseEntity.ok(BaseResponse.OK(response));
+    public ResponseEntity<BaseResponse<String>> postLike(@RequestParam Long requestId) throws DataExistException {
+        likeService.assignLikeToRequest(requestId);
+        return ResponseEntity.ok(BaseResponse.message("OK"));
     }
 
 
