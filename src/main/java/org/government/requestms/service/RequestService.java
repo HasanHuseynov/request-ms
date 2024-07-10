@@ -107,18 +107,15 @@ public class RequestService {
 
     private List<RequestResponse> getRequestResponses(List<Request> requestList) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Like> likes = likeRepository.findByEmail(email);
-        Set<Long> likedRequestIds = likes.stream()
-                .map(like -> like.getRequest().getRequestId())
-                .collect(Collectors.toSet());
 
         List<RequestResponse> responseList = requestMapper.mapToDtoList(requestList);
         responseList.forEach(response -> {
             Long commentCount = commentRepository.countByRequest(requestRepository.getReferenceById(response.getRequestId()));
             Long likeCount = likeRepository.countByRequest(requestRepository.getReferenceById(response.getRequestId()));
+            boolean isLiked = likeRepository.findByEmailAndRequest_RequestId(email, response.getRequestId()) != null;
             response.setCommentCount(Math.toIntExact(commentCount));
             response.setLikeCount(Math.toIntExact(likeCount));
-            response.setLikeSuccess(likedRequestIds.contains(response.getRequestId()));
+            response.setLikeSuccess(isLiked);
 
         });
 
@@ -192,11 +189,8 @@ public class RequestService {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new DataNotFoundException("Müraciət tapılmadı"));
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Like> likes = likeRepository.findByEmail(email);
 
-        Set<Long> likedRequestIds = likes.stream()
-                .map(like -> like.getRequest().getRequestId())
-                .collect(Collectors.toSet());
+        boolean isLiked = likeRepository.findByEmailAndRequest_RequestId(email, requestId) != null;
         RequestResponse response = requestMapper.mapToDto(request);
 
         Long commentCount = commentRepository.countByRequest(request);
@@ -204,8 +198,7 @@ public class RequestService {
 
         response.setCommentCount(Math.toIntExact(commentCount));
         response.setLikeCount(Math.toIntExact(likeCount));
-        response.setLikeSuccess(likedRequestIds.contains(request.getRequestId()));
-
+        response.setLikeSuccess(isLiked);
         return response;
     }
 }
