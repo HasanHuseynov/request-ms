@@ -1,5 +1,7 @@
 package org.government.requestms.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Status {
     Gözləmədə("Gözləmədə"),
     Baxılır("Baxılır"),
@@ -7,15 +9,14 @@ public enum Status {
     Həlledildi("Həll edildi"),
     Arxivdədir("Arxivdədir");
 
-    public final String name;
+    private final String value;
 
-    Status(String name) {
-        this.name = name;
+    Status(String value) {
+        this.value = value;
     }
 
-    @Override
-    public String toString() {
-        return this.name;
+    @JsonValue
+    public String getValue() {
+        return value;
     }
-
 }
