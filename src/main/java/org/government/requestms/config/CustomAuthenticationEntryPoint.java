@@ -18,7 +18,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
-        String errorMessage = "Your session has expired";
+        String errorMessage = "Invalid token or expired";
 
         BaseResponse<String> body = BaseResponse.fail(errorMessage);
         response.getOutputStream().println(objectMapper.writeValueAsString(body));
