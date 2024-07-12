@@ -6,7 +6,7 @@ public enum Status {
     Gözləmədə("Gözləmədə"),
     Baxılır("Baxılır"),
     Əssasızdır("Əssasızdır"),
-    Həlledildi("Həll edildi"),
+    Həlledildi("Həlledildi"),
     Arxivdədir("Arxivdədir");
 
     private final String value;
