@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.RequestDto;
 import org.government.requestms.dto.response.RequestResponse;
 import org.government.requestms.entity.Category;
-import org.government.requestms.entity.Like;
 import org.government.requestms.entity.Request;
 import org.government.requestms.enums.Status;
 import org.government.requestms.exception.DataExistException;
@@ -25,8 +24,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
