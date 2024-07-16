@@ -35,8 +35,9 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors((cors) -> cors
-                        .configurationSource(corsConfigurationSource()))
+        http
+//        http.cors((cors) -> cors
+////                        .configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
                         request.requestMatchers(
@@ -56,21 +57,21 @@ public class SecurityConfiguration {
         return http.build();
     }
 
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("*"));
-        configuration
-                .setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setMaxAge(3600L);
-        configuration.setAllowedHeaders(Arrays
-                .asList("Authorization", "x-xsrf-token", "Accept-language", "Access-Control-Allow-Headers",
-                        "Origin", "Accept", "X-Requested-With", "userId",
-                        "Content-Type", "Access-Control-Request-Method", "Access-Control-Request-Headers",
-                        "Access-Control-Expose-Headers", "X-Session-Id", "X-Platform"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+//    CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Collections.singletonList("*"));
+//        configuration
+//                .setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "DELETE", "OPTIONS", "PATCH"));
+//        configuration.setMaxAge(3600L);
+//        configuration.setAllowedHeaders(Arrays
+//                .asList("Authorization", "x-xsrf-token", "Accept-language", "Access-Control-Allow-Headers",
+//                        "Origin", "Accept", "X-Requested-With", "userId",
+//                        "Content-Type", "Access-Control-Request-Method", "Access-Control-Request-Headers",
+//                        "Access-Control-Expose-Headers", "X-Session-Id", "X-Platform"));
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
     @Bean
     public AuthenticationManager authenticationManager() {
