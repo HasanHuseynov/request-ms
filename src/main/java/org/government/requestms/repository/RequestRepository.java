@@ -1,5 +1,6 @@
 package org.government.requestms.repository;
 
+import org.government.requestms.entity.Like;
 import org.government.requestms.entity.Request;
 import org.government.requestms.enums.Status;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface RequestRepository extends JpaRepository<Request, Long>, JpaSpecificationExecutor<Request> {
     Page<Request> findByEmail(String email, Pageable pageable);
@@ -21,5 +23,8 @@ public interface RequestRepository extends JpaRepository<Request, Long>, JpaSpec
     Page<Request> findByOrganizationName(String organizationName, Pageable pageable);
 
     List<Request> findByStatusInAndLastModifiedBefore(List<Status> status, LocalDateTime lastModified);
+
+    Optional<Request> findByRequestIdAndEmail(Long requestId, String email);
+
 
 }
