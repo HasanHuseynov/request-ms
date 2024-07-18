@@ -45,6 +45,6 @@ public class RequestSpecification {
     }
 
     public static Specification<Request> isCreatedWithinLast30Days() {
-        return isCreatedWithinLastDays(7);
+        return isCreatedWithinLastDays(30);
     }
 }
