@@ -7,6 +7,7 @@ import org.government.requestms.dto.response.LikeResponse;
 import org.government.requestms.exception.DataExistException;
 import org.government.requestms.service.LikeService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class LikeController {
     private final LikeService likeService;
 
     @GetMapping
+
     public ResponseEntity<BaseResponse<List<LikeResponse>>> getAllLikes() {
         return ResponseEntity.ok(BaseResponse.OK(likeService.getAllLike()));
     }
@@ -36,12 +38,14 @@ public class LikeController {
     }
 
     @DeleteMapping
+    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<BaseResponse<String>> deleteLike(Long requestId) {
         likeService.deleteLike(requestId);
         return ResponseEntity.ok(BaseResponse.message("Like deleted successfully!"));
     }
 
     @PostMapping("/post")
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
     public ResponseEntity<BaseResponse<String>> postLike(@RequestParam Long requestId) throws DataExistException {
         likeService.assignLikeToRequest(requestId);
         return ResponseEntity.ok(BaseResponse.message("OK"));
