@@ -131,9 +131,13 @@ public class RequestService {
         requestRepository.save(updateRequest);
     }
 
-    public void deleteRequest(Long requestId) throws DataExistException {
-        Request requestEntity = requestRepository.findById(requestId)
-                .orElseThrow(() -> new DataNotFoundException("Müraciət tapılmadı"));
+    public void deleteRequest(Long requestId, String token) throws DataExistException {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        var email = jwtService.extractUsername(token);
+        Request requestEntity = requestRepository.findByRequestIdAndEmail(requestId, email)
+                .orElseThrow(() -> new DataNotFoundException("Müraciət tapılmadı və ya bu sizin müraciətiniz deyil"));
         if (requestEntity.getStatus() == Status.Gözləmədə) {
             requestRepository.delete(requestEntity);
         } else

@@ -87,8 +87,11 @@ public class RequestController {
     @DeleteMapping("/{request_id}")
     @PreAuthorize("hasAuthority('USER')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<String> deleteRequest(@PathVariable Long request_id) throws DataExistException {
-        requestService.deleteRequest(request_id);
+    public BaseResponse<String> deleteRequest(@PathVariable Long request_id,
+                                              HttpServletRequest request) throws DataExistException {
+        String token = request.getHeader("Authorization");
+
+        requestService.deleteRequest(request_id, token);
         return BaseResponse.message("Müraciətiniz silindi");
 
     }
