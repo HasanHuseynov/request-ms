@@ -34,7 +34,7 @@ public class LikeService {
 
         var likeEntity = new Like();
         likeEntity.setEmail(name);
-        likeEntity = (Like) likeRepository.save(likeEntity);
+        likeEntity =  likeRepository.save(likeEntity);
         return this.likeMapper.toDTO(likeEntity);
     }
 
@@ -55,17 +55,17 @@ public class LikeService {
     }
 
 
-    public void deleteLike(Long requestId) {
-        Like likeEntity = likeRepository.findByRequest_RequestId(requestId).
-                orElseThrow(() -> new DataNotFoundException("Like not found with likeId: " + requestId));
+    public void deleteLike(Long likeId) {
+        Like likeEntity = this.likeRepository.findById(likeId).orElseThrow(() ->
+             new DataNotFoundException("Like not found with likeId: " + likeId));
         log.info("Deleted the like with details:" + likeEntity.toString());
-        likeRepository.delete(likeEntity);
+        this.likeRepository.delete(likeEntity);
     }
 
     public void updateLike(Long id, LikeRequest likeRequest) {
-        Like likeEntity = (Like) this.likeRepository.findById(id).orElseThrow(() -> {
-            return new DataNotFoundException("Like not found with id:" + id);
-        });
+        Like likeEntity = likeRepository.findById(id).orElseThrow(() ->
+             new DataNotFoundException("Like not found with id:" + id)
+        );
         this.likeMapper.mapUpdateRequestToEntity(likeEntity, likeRequest);
         this.likeRepository.save(likeEntity);
     }

@@ -24,8 +24,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RequestController {
     private final RequestService requestService;
-
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('USER')")
@@ -72,6 +70,10 @@ public class RequestController {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
         return BaseResponse.OK(requestService.getOrganizationRequest(token, pageable));
     }
+
+
+
+
 
 
     @PutMapping("/{request_id}")
