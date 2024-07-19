@@ -22,6 +22,7 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final LikeMapper likeMapper;
     private final RequestRepository requestRepository;
+    private final JWTService jwtService;
 
     public List<LikeResponse> getAllLike() {
         List<Like> likeEntities = this.likeRepository.findAll();
@@ -55,10 +56,16 @@ public class LikeService {
     }
 
 
-    public void deleteLike(Long requestId) {
-        Like likeEntity = this.likeRepository.findByRequest_RequestId(requestId).orElseThrow(() ->
-                new DataNotFoundException("Like not found with requestId: " + requestId));
-        log.info("Deleted the like with details:" + likeEntity.toString());
+    public void deleteLike(Long requestId, String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        var email = jwtService.extractUsername(token);
+        Like likeEntity = this.likeRepository.findByEmailAndRequest_RequestId(email, requestId);
+        if (likeEntity == null) {
+            throw new DataNotFoundException("Like not found with requestId: " + requestId);
+        }
+        log.info("Deleted the like with details:" + likeEntity);
         this.likeRepository.delete(likeEntity);
     }
 

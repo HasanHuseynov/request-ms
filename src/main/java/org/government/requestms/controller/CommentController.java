@@ -56,9 +56,12 @@ public class CommentController {
         return ResponseEntity.ok(BaseResponse.message("Comment updated successfully!"));
     }
 
-    @DeleteMapping
-    public ResponseEntity<BaseResponse<String>> deleteComment(Long id) {
-        this.commentService.deleteComment(id);
+    @DeleteMapping("/{requestId}")
+    public ResponseEntity<BaseResponse<String>> deleteComment(@PathVariable Long requestId,
+                                                              HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+
+        this.commentService.deleteComment(requestId, token);
         return ResponseEntity.ok(BaseResponse.message("Comment deleted successfully!"));
     }
 

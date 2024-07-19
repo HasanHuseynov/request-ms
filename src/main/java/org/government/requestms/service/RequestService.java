@@ -137,7 +137,7 @@ public class RequestService {
         }
         var email = jwtService.extractUsername(token);
         Request requestEntity = requestRepository.findByRequestIdAndEmail(requestId, email)
-                .orElseThrow(() -> new DataNotFoundException("Müraciət tapılmadı və ya bu sizin müraciətiniz deyil"));
+                .orElseThrow(() -> new DataNotFoundException("Müraciətiniz tapılmadı"));
         if (requestEntity.getStatus() == Status.Gözləmədə) {
             requestRepository.delete(requestEntity);
         } else
