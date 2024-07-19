@@ -85,9 +85,10 @@ public class CommentService {
 
     }
 
-    public List<CommentResponse> getCommentByRequest(Long id) {
-        var commentsEntity = commentRepository.findByRequest_RequestId(id);
-        return commentMapper.toDTOs(commentsEntity);
+    public List<CommentResponse> getCommentByRequest(Long id,Pageable pageable) {
+        var commentPage = commentRepository.findByRequest_RequestId(id,pageable);
+        var commentList = commentPage.getContent();
+        return commentMapper.toDTOs(commentList);
     }
 
 

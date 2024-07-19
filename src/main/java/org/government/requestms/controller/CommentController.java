@@ -71,8 +71,11 @@ public class CommentController {
     }
 
     @GetMapping("/request/{requestId}")
-    public ResponseEntity<BaseResponse<List<CommentResponse>>> getCommentById(@PathVariable Long requestId) {
-        return ResponseEntity.ok(BaseResponse.OK(commentService.getCommentByRequest(requestId)));
+    public ResponseEntity<BaseResponse<List<CommentResponse>>> getCommentById(@RequestParam(defaultValue = "0") int page,
+                                                                              @RequestParam(defaultValue = "10") int size,
+                                                                              @PathVariable Long requestId) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
+        return ResponseEntity.ok(BaseResponse.OK(commentService.getCommentByRequest(requestId,pageable)));
     }
 
     @PostMapping("/post")
