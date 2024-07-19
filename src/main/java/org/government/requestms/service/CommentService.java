@@ -85,18 +85,20 @@ public class CommentService {
 
     }
 
-    public List<CommentResponse> getCommentByRequest(Long id){
+    public List<CommentResponse> getCommentByRequest(Long id) {
         var commentsEntity = commentRepository.findByRequest_RequestId(id);
         return commentMapper.toDTOs(commentsEntity);
     }
 
 
+    public void deleteComment(Long id, String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        var email = jwtService.extractUsername(token);
+        Comment commentEntity = commentRepository.findByEmailAndRequest_RequestId(email, id)
+                .orElseThrow(() -> new DataNotFoundException("Comment not found with id: " + id));
 
-
-    public void deleteComment(Long id) {
-        Comment commentEntity = commentRepository.findById(id).orElseThrow(() -> {
-            return new DataNotFoundException("Comment not found with id: " + id);
-        });
         log.info("Deleted the comment with details:" + commentEntity.toString());
         commentRepository.delete(commentEntity);
     }

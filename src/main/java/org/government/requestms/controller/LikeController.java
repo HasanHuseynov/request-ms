@@ -1,5 +1,6 @@
 package org.government.requestms.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.LikeRequest;
 import org.government.requestms.dto.response.BaseResponse;
@@ -20,7 +21,6 @@ public class LikeController {
     private final LikeService likeService;
 
     @GetMapping
-
     public ResponseEntity<BaseResponse<List<LikeResponse>>> getAllLikes() {
         return ResponseEntity.ok(BaseResponse.OK(likeService.getAllLike()));
     }
@@ -38,14 +38,12 @@ public class LikeController {
     }
 
     @DeleteMapping
-    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<BaseResponse<String>> deleteLike(Long requestId) {
         likeService.deleteLike(requestId);
         return ResponseEntity.ok(BaseResponse.message("Like deleted successfully!"));
     }
 
     @PostMapping("/post")
-    @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
     public ResponseEntity<BaseResponse<String>> postLike(@RequestParam Long requestId) throws DataExistException {
         likeService.assignLikeToRequest(requestId);
         return ResponseEntity.ok(BaseResponse.message("OK"));
