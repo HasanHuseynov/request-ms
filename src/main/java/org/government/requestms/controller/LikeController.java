@@ -1,5 +1,6 @@
 package org.government.requestms.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.LikeRequest;
 import org.government.requestms.dto.response.BaseResponse;
@@ -36,7 +37,10 @@ public class LikeController {
     }
 
     @DeleteMapping
-    public ResponseEntity<BaseResponse<String>> deleteLike(Long requestId, String token) {
+    public ResponseEntity<BaseResponse<String>> deleteLike(Long requestId,
+                                                           HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+
         likeService.deleteLike(requestId, token);
         return ResponseEntity.ok(BaseResponse.message("Like deleted successfully!"));
     }
