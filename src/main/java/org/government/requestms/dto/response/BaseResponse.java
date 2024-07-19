@@ -15,9 +15,9 @@ public class BaseResponse<T> {
 
     @Builder
     public BaseResponse(String message, boolean success, T data) {
-        this.message = message;
-        this.success = success;
-        this.data = data;
+         this.message = message;
+         this.success = success;
+         this.data = data;
     }
 
     public static BaseResponse<String> fail(String message) {

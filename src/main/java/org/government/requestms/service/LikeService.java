@@ -25,20 +25,10 @@ public class LikeService {
     private final JWTService jwtService;
 
     public List<LikeResponse> getAllLike() {
-        List<Like> likeEntities = this.likeRepository.findAll();
-        return this.likeMapper.toDTOs(likeEntities);
+        List<Like> likeEntities =  likeRepository.findAll();
+        return  likeMapper.toDTOs(likeEntities);
     }
-
-
-    public LikeResponse createNewLike() {
-        var name = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        var likeEntity = new Like();
-        likeEntity.setEmail(name);
-        likeEntity = likeRepository.save(likeEntity);
-        return this.likeMapper.toDTO(likeEntity);
-    }
-
+    
 
     public void assignLikeToRequest(Long requestId) throws DataExistException {
         var name = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -61,20 +51,14 @@ public class LikeService {
             token = token.substring(7);
         }
         var email = jwtService.extractUsername(token);
-        Like likeEntity = this.likeRepository.findByEmailAndRequest_RequestId(email, requestId);
+        Like likeEntity =  likeRepository.findByEmailAndRequest_RequestId(email, requestId);
         if (likeEntity == null) {
             throw new DataNotFoundException("Like not found with requestId: " + requestId);
         }
         log.info("Deleted the like with details:" + likeEntity);
-        this.likeRepository.delete(likeEntity);
+         likeRepository.delete(likeEntity);
     }
 
-    public void updateLike(Long id, LikeRequest likeRequest) {
-        Like likeEntity = likeRepository.findById(id).orElseThrow(() ->
-                new DataNotFoundException("Like not found with id:" + id)
-        );
-        this.likeMapper.mapUpdateRequestToEntity(likeEntity, likeRequest);
-        this.likeRepository.save(likeEntity);
-    }
+
 
 }

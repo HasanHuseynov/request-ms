@@ -1,7 +1,9 @@
 package org.government.requestms.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public enum Status {
     Gözləmədə("Gözləmədə"),
     Baxılır("Baxılır"),
@@ -11,9 +13,6 @@ public enum Status {
 
     private final String value;
 
-    Status(String value) {
-        this.value = value;
-    }
 
     @JsonValue
     public String getValue() {
