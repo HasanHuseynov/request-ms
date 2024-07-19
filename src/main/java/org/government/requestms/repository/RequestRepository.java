@@ -17,8 +17,9 @@ import java.util.Optional;
 public interface RequestRepository extends JpaRepository<Request, Long>, JpaSpecificationExecutor<Request> {
     Page<Request> findByEmail(String email, Pageable pageable);
 
-    @Query("SELECT r FROM Request r WHERE LOWER(r.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    Page<Request> findByDescriptionContaining(@Param("keyword") String keyword, Pageable pageable);
+    @Query("SELECT r FROM Request r WHERE LOWER(r.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR CAST(r.requestId AS string) LIKE CONCAT(:id, '%')")
+    Page<Request> findByDescriptionContainingOrId(@Param("keyword") String keyword, @Param("id") String id, Pageable pageable);
+
 
     Page<Request> findByOrganizationName(String organizationName, Pageable pageable);
 

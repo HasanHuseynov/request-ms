@@ -114,12 +114,13 @@ public class RequestController {
     @GetMapping("/search")
     @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','GOVERMENT')")
     @ResponseStatus(HttpStatus.OK)
-    public BaseResponse<List<RequestResponse>> searchRequests(@RequestParam String keyword,
+    public BaseResponse<List<RequestResponse>> searchRequests(@RequestParam(required = false) String keyword,
+                                                              @RequestParam(required = false) String id,
                                                               @RequestParam(defaultValue = "0") int page,
                                                               @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
-        return BaseResponse.OK(requestService.searchRequests(pageable, keyword));
+        return BaseResponse.OK(requestService.searchRequests( keyword, id ,pageable));
     }
 
     @PatchMapping("/update-status/{requestId}")

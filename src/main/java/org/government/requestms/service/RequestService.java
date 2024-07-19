@@ -61,8 +61,8 @@ public class RequestService {
         return getRequestResponses(requestList);
     }
 
-    public List<RequestResponse> searchRequests(Pageable pageable, String keyword) {
-        var requestPage = requestRepository.findByDescriptionContaining(keyword, pageable);
+    public List<RequestResponse> searchRequests(String keyword,String id, Pageable pageable) {
+        var requestPage = requestRepository.findByDescriptionContainingOrId(keyword,id, pageable);
         List<Request> requestList = requestPage.getContent();
         return getRequestResponses(requestList);
     }
