@@ -1,7 +1,5 @@
 package org.government.requestms.controller;
 
-import java.util.List;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,14 +8,14 @@ import org.government.requestms.dto.request.CommentRequest;
 import org.government.requestms.dto.response.BaseResponse;
 import org.government.requestms.dto.response.CommentResponse;
 import org.government.requestms.service.CommentService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,17 +44,11 @@ public class CommentController {
         return ResponseEntity.ok(BaseResponse.OK(commentService.getOrganizationComment(pageable, token)));
     }
 
-    @PostMapping
-    @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<BaseResponse<String>> createComment(@RequestBody CommentRequest commentRequest) {
-         commentService.createNewComment(commentRequest);
-        return ResponseEntity.ok(BaseResponse.message("Comment has been created!"));
-    }
 
     @PutMapping
     @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','SUPER_STAFF')")
     public ResponseEntity<BaseResponse<String>> updateComment(@RequestParam Long id, @RequestBody CommentRequest commentRequest) {
-         commentService.updateComment(id, commentRequest);
+        commentService.updateComment(id, commentRequest);
         return ResponseEntity.ok(BaseResponse.message("Comment updated successfully!"));
     }
 
@@ -66,16 +58,17 @@ public class CommentController {
                                                               HttpServletRequest request) {
         String token = request.getHeader("Authorization");
 
-         commentService.deleteComment(requestId, token);
+        commentService.deleteComment(requestId, token);
         return ResponseEntity.ok(BaseResponse.message("Comment deleted successfully!"));
     }
 
     @GetMapping("/request/{requestId}")
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','SUPER_STAFF')")
     public ResponseEntity<BaseResponse<List<CommentResponse>>> getCommentById(@RequestParam(defaultValue = "0") int page,
                                                                               @RequestParam(defaultValue = "10") int size,
                                                                               @PathVariable Long requestId) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
-        return ResponseEntity.ok(BaseResponse.OK(commentService.getCommentByRequest(requestId,pageable)));
+        return ResponseEntity.ok(BaseResponse.OK(commentService.getCommentByRequest(requestId, pageable)));
     }
 
     @PostMapping("/post")

@@ -21,13 +21,14 @@ public class LikeController {
     private final LikeService likeService;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','SUPER_STAFF')")
     public ResponseEntity<BaseResponse<List<LikeResponse>>> getAllLikes() {
         return ResponseEntity.ok(BaseResponse.OK(likeService.getAllLike()));
     }
 
 
     @DeleteMapping
-    @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','SUPER_STAFF')")
     public ResponseEntity<BaseResponse<String>> deleteLike(Long requestId,
                                                            HttpServletRequest request) {
         String token = request.getHeader("Authorization");
@@ -37,7 +38,7 @@ public class LikeController {
     }
 
     @PostMapping("/post")
-    @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','SUPER_STAFF')")
     public ResponseEntity<BaseResponse<String>> postLike(@RequestParam Long requestId) throws DataExistException {
         likeService.assignLikeToRequest(requestId);
         return ResponseEntity.ok(BaseResponse.message("OK"));

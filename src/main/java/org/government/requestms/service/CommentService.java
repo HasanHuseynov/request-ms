@@ -48,12 +48,6 @@ public class CommentService {
 
     }
 
-    public CommentResponse createNewComment(CommentRequest commentRequest) {
-
-        Comment commentEntity = commentMapper.fromDTO(commentRequest);
-        commentEntity = commentRepository.save(commentEntity);
-        return commentMapper.toDTO(commentEntity);
-    }
 
     public CommentResponse assignCommentToRequest(Long requestId, CommentRequest commentRequest, String token) {
         if (token != null && token.startsWith("Bearer ")) {
@@ -85,8 +79,8 @@ public class CommentService {
 
     }
 
-    public List<CommentResponse> getCommentByRequest(Long id,Pageable pageable) {
-        var commentPage = commentRepository.findByRequest_RequestId(id,pageable);
+    public List<CommentResponse> getCommentByRequest(Long id, Pageable pageable) {
+        var commentPage = commentRepository.findByRequest_RequestId(id, pageable);
         var commentList = commentPage.getContent();
         return commentMapper.toDTOs(commentList);
     }
@@ -105,9 +99,8 @@ public class CommentService {
     }
 
     public void updateComment(Long id, CommentRequest commentRequest) {
-        Comment commentEntity = commentRepository.findById(id).orElseThrow(() -> {
-            return new DataNotFoundException("Comment not found with id:" + id);
-        });
+        Comment commentEntity = commentRepository.findById(id)
+                .orElseThrow(() -> new DataNotFoundException("Comment not found with id:" + id));
         commentMapper.mapUpdateRequestToEntity(commentEntity, commentRequest);
         commentRepository.save(commentEntity);
     }
