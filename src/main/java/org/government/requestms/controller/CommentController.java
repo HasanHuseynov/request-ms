@@ -8,11 +8,13 @@ import org.government.requestms.dto.request.CommentRequest;
 import org.government.requestms.dto.response.BaseResponse;
 import org.government.requestms.dto.response.CommentResponse;
 import org.government.requestms.service.CommentService;
+import org.government.requestms.service.JWTService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.List;
 @Slf4j
 public class CommentController {
     private final CommentService commentService;
+    private final JWTService jwtService;
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','SUPER_STAFF')")
@@ -66,9 +69,18 @@ public class CommentController {
     @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','SUPER_STAFF')")
     public ResponseEntity<BaseResponse<List<CommentResponse>>> getCommentById(@RequestParam(defaultValue = "0") int page,
                                                                               @RequestParam(defaultValue = "10") int size,
-                                                                              @PathVariable Long requestId) {
+                                                                              @PathVariable Long requestId,
+                                                                              HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        var fullName = jwtService.extractFullName(token);
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
-        return ResponseEntity.ok(BaseResponse.OK(commentService.getCommentByRequest(requestId, pageable)));
+        List<CommentResponse> comments = commentService.getCommentByRequest(requestId, pageable);
+
+        return ResponseEntity.ok(BaseResponse.OKComment(comments, fullName));
     }
 
     @PostMapping("/post")

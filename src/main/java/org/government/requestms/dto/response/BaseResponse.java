@@ -12,12 +12,14 @@ public class BaseResponse<T> {
     private T data;
     private String message;
     private boolean success;
+    private String fullName;
 
     @Builder
-    public BaseResponse(String message, boolean success, T data) {
-         this.message = message;
-         this.success = success;
-         this.data = data;
+    public BaseResponse(String message, boolean success, T data, String fullName) {
+        this.message = message;
+        this.success = success;
+        this.data = data;
+        this.fullName = fullName;
     }
 
     public static BaseResponse<String> fail(String message) {
@@ -39,6 +41,15 @@ public class BaseResponse<T> {
         return BaseResponse.<String>builder()
                 .message(message)
                 .success(true)
+                .build();
+    }
+
+    public static <T> BaseResponse<T> OKComment(T data, String fullName) {
+        return BaseResponse.<T>builder()
+                .message("SUCCESS")
+                .success(true)
+                .data(data)
+                .fullName(fullName)
                 .build();
     }
 }
