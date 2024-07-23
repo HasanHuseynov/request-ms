@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.government.requestms.dto.request.CategoryRequest;
 import org.government.requestms.dto.response.CategoryResponse;
 import org.government.requestms.entity.Category;
+import org.government.requestms.entity.Request;
 import org.government.requestms.exception.DataExistException;
 import org.government.requestms.exception.DataNotFoundException;
 import org.government.requestms.mapper.CategoryMapper;
 import org.government.requestms.repository.CategoryRepository;
+import org.government.requestms.repository.RequestRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final RequestRepository requestRepository;
 
     public void createCategory(CategoryRequest categoryRequest) throws DataExistException {
         if (categoryRepository.existsByCategoryName(categoryRequest.getCategoryName())) {
@@ -45,14 +48,19 @@ public class CategoryService {
         Category oldCategory = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new DataNotFoundException("Belə bir kateqoriya mövcud deyil"));
 
-            Category updateCategory = categoryMapper.mapToUpdateEntity(categoryRequest, oldCategory);
-            categoryRepository.save(updateCategory);
-        }
+        Category updateCategory = categoryMapper.mapToUpdateEntity(categoryRequest, oldCategory);
+        categoryRepository.save(updateCategory);
+    }
 
 
     public void deleteCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new DataNotFoundException("Belə bir kateqoriya mövcud deyil"));
+        List<Request> requests = requestRepository.findByCategory_CategoryId(categoryId);
+        requests.forEach(request -> {
+            request.setCategory(null);
+            requestRepository.save(request);
+        });
         categoryRepository.delete(category);
     }
 }
