@@ -15,11 +15,11 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Long countByRequest(Request request);
 
-    Page<Comment> findByRequest_RequestId(Long id,Pageable pageable);
+    Page<Comment> findByRequest_RequestId(Long id, Pageable pageable);
 
     Page<Comment> findByFullName(String organizationName, Pageable pageable);
 
-    Optional<Comment> findByEmailAndRequest_RequestId(String email, Long requestId);
+    Optional<Comment> findByEmailAndCommentId(String email, Long commentId);
 
 
 }

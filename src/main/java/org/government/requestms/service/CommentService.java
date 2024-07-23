@@ -9,7 +9,6 @@ import org.government.requestms.exception.DataNotFoundException;
 import org.government.requestms.mapper.CommentMapper;
 import org.government.requestms.repository.CommentRepository;
 import org.government.requestms.repository.RequestRepository;
-import org.hibernate.annotations.Comments;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,6 +43,7 @@ public class CommentService {
         var organizationName = jwtService.extractOrganizationName(token);
         Page<Comment> commentPage = commentRepository.findByFullName(organizationName, pageable);
         List<Comment> commentList = commentPage.getContent();
+
         return commentMapper.toDTOs(commentList);
 
     }
@@ -86,20 +86,22 @@ public class CommentService {
     }
 
 
-    public void deleteComment(Long id, String token) {
+    public void deleteComment(Long commentİd, String token) {
         if (token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
         var email = jwtService.extractUsername(token);
-        Comment commentEntity = commentRepository.findByEmailAndRequest_RequestId(email, id)
-                .orElseThrow(() -> new DataNotFoundException("Comment not found with id: " + id));
+        Comment commentEntity = commentRepository.findByEmailAndCommentId(email, commentİd)
+                .orElseThrow(() -> new DataNotFoundException("Comment not found with commentİd: " + commentİd));
 
         log.info("Deleted the comment with details:" + commentEntity.toString());
         commentRepository.delete(commentEntity);
     }
 
     public void updateComment(Long id, CommentRequest commentRequest) {
-        Comment commentEntity = commentRepository.findById(id)
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Comment commentEntity = commentRepository.findByEmailAndCommentId(email, id)
                 .orElseThrow(() -> new DataNotFoundException("Comment not found with id:" + id));
         commentMapper.mapUpdateRequestToEntity(commentEntity, commentRequest);
         commentRepository.save(commentEntity);

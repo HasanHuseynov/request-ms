@@ -52,13 +52,13 @@ public class CommentController {
         return ResponseEntity.ok(BaseResponse.message("Comment updated successfully!"));
     }
 
-    @DeleteMapping("/{requestId}")
+    @DeleteMapping("/{commentİd}")
     @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','SUPER_STAFF')")
-    public ResponseEntity<BaseResponse<String>> deleteComment(@PathVariable Long requestId,
+    public ResponseEntity<BaseResponse<String>> deleteComment(@PathVariable Long commentİd,
                                                               HttpServletRequest request) {
         String token = request.getHeader("Authorization");
 
-        commentService.deleteComment(requestId, token);
+        commentService.deleteComment(commentİd, token);
         return ResponseEntity.ok(BaseResponse.message("Comment deleted successfully!"));
     }
 
