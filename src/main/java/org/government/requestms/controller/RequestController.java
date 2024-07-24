@@ -24,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RequestController {
     private final RequestService requestService;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('USER')")
@@ -99,9 +100,13 @@ public class RequestController {
             @RequestParam(required = false) Status status,
             @RequestParam(required = false) String categoryName,
             @RequestParam(required = false) String organizationName,
-            @Parameter(description = "Parameter types: LastDay, LastWeek, LastMonth")
-            @RequestParam(required = false) String days) {
-        return BaseResponse.OK(requestService.getRequestByFilter(status, categoryName, organizationName, days));
+            @Parameter(description = "Parameter types: Son bir gün, Son bir həftə, Son bir ay")
+            @RequestParam(required = false) String days,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
+
+        return BaseResponse.OK(requestService.getRequestByFilter(status, categoryName, organizationName, days, pageable));
     }
 
     @GetMapping("/search")
@@ -113,7 +118,7 @@ public class RequestController {
                                                               @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
-        return BaseResponse.OK(requestService.searchRequests( keyword, id ,pageable));
+        return BaseResponse.OK(requestService.searchRequests(keyword, id, pageable));
     }
 
     @PatchMapping("/update-status/{requestId}")

@@ -61,13 +61,14 @@ public class RequestService {
         return getRequestResponses(requestList);
     }
 
-    public List<RequestResponse> searchRequests(String keyword,String id, Pageable pageable) {
-        var requestPage = requestRepository.findByDescriptionContainingOrId(keyword,id, pageable);
+    public List<RequestResponse> searchRequests(String keyword, String id, Pageable pageable) {
+        var requestPage = requestRepository.findByDescriptionContainingOrId(keyword, id, pageable);
         List<Request> requestList = requestPage.getContent();
         return getRequestResponses(requestList);
     }
 
-    public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName, String days) {
+    public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName, String days,
+                                                    Pageable pageable) {
 
         {
             Specification<Request> spec = Specification.where(null);
@@ -83,15 +84,15 @@ public class RequestService {
                 spec = spec.and(RequestSpecification.hasOrganization(organizationName));
             }
 
-            if ("LastDay".equalsIgnoreCase(days)) {
+            if ("Son bir gün".equalsIgnoreCase(days)) {
                 spec = RequestSpecification.isCreatedWithinLast1Day();
-            } else if ("LastWeek".equalsIgnoreCase(days)) {
+            } else if ("Son bir həftə".equalsIgnoreCase(days)) {
                 spec = RequestSpecification.isCreatedWithinLast7Days();
-            } else if ("LastMonth".equalsIgnoreCase(days)) {
+            } else if ("Son bir ay".equalsIgnoreCase(days)) {
                 spec = RequestSpecification.isCreatedWithinLast30Days();
             }
 
-            return getRequestResponses(requestRepository.findAll(spec));
+            return getRequestResponses(requestRepository.findAll(spec, pageable).getContent());
         }
     }
 
@@ -182,7 +183,7 @@ public class RequestService {
 
         Page<Request> requestPage = requestRepository.findByOrganizationName(organizationName, pageable);
         List<Request> requestList = requestPage.getContent();
-        return requestMapper.mapToDtoList(requestList);
+        return getRequestResponses(requestList);
     }
 
 
