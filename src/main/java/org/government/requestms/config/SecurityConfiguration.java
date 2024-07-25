@@ -30,7 +30,6 @@ import java.util.Collections;
 @EnableMethodSecurity
 public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
@@ -50,8 +49,7 @@ public class SecurityConfiguration {
                                         "/webjars/**",
                                         "/swagger-ui.html").permitAll()
                                 .anyRequest().authenticated())
-                .exceptionHandling(e -> e.accessDeniedHandler(customAccessDeniedHandler)
-                        .authenticationEntryPoint(customAuthenticationEntryPoint))
+                .exceptionHandling(e -> e.authenticationEntryPoint(customAuthenticationEntryPoint))
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

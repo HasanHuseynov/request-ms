@@ -4,6 +4,7 @@ import feign.FeignException;
 import org.government.requestms.dto.response.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -38,6 +39,12 @@ public class ExceptionHandle {
     @ExceptionHandler(FeignException.NotFound.class)
     public ResponseEntity<?> handleFeignNotFoundException(FeignException.NotFound ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.contentUTF8());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public BaseResponse<String> handleAccessDeniedException(AccessDeniedException e) {
+        return BaseResponse.fail(e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
