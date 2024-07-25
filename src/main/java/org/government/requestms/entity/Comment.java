@@ -36,7 +36,7 @@ public class Comment {
     @Column(name = "full_name")
     private String fullName;
 
-    @Column(name = "comment_text")
+    @Column(name = "comment_text", length = 501)
     private String commentText;
 
     @Column(name = "create_date", nullable = false, updatable = false)

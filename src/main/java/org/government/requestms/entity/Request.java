@@ -40,7 +40,7 @@ public class Request {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 501)
     private String description;
 
     @Column(name = "status")
