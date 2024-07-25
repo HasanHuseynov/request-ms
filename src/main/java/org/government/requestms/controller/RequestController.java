@@ -97,9 +97,9 @@ public class RequestController {
     @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','GOVERMENT')")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<List<RequestResponse>> getRequestByFilter(
-            @RequestParam(required = false) Status status,
-            @RequestParam(required = false) String categoryName,
-            @RequestParam(required = false) String organizationName,
+            @RequestParam(required = false,defaultValue = "") Status status,
+            @RequestParam(required = false,defaultValue = "") String categoryName,
+            @RequestParam(required = false,defaultValue = "") String organizationName,
             @Parameter(description = "Parameter types: Son bir gün, Son bir həftə, Son bir ay")
             @RequestParam(required = false) String days,
             @RequestParam(defaultValue = "0") int page,

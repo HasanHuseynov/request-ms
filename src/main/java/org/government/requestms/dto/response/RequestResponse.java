@@ -24,7 +24,7 @@ public class RequestResponse {
     private Status status;
     private String organizationName;
 
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
+    @JsonFormat(pattern = "dd.MM.yyyy, HH:mm")
     private LocalDateTime createDate;
 
     private Integer commentCount;
