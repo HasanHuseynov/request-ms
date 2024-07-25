@@ -62,7 +62,13 @@ public class RequestService {
     }
 
     public List<RequestResponse> searchRequests(String keyword, String id, Pageable pageable) {
-        var requestPage = requestRepository.findByDescriptionContainingOrId(keyword, id, pageable);
+        Page<Request> requestPage;
+
+        if ((keyword == null || keyword.isEmpty()) && (id == null || id.isEmpty())) {
+            requestPage = requestRepository.findAll(pageable);
+        } else {
+            requestPage = requestRepository.findByDescriptionContainingOrId(keyword, id, pageable);
+        }
         List<Request> requestList = requestPage.getContent();
         return getRequestResponses(requestList);
     }
@@ -160,7 +166,7 @@ public class RequestService {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime dateTime = now.minusDays(30);
 
-        List<Status> statusList = Arrays.asList(Status.Əssasızdır, Status.Həlledildi);
+        List<Status> statusList = Arrays.asList(Status.Əsassızdır, Status.Həlledildi);
 
         List<Request> requests = requestRepository.findByStatusInAndLastModifiedBefore(statusList, dateTime);
 
