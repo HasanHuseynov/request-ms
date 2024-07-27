@@ -109,6 +109,23 @@ public class RequestController {
         return BaseResponse.OK(requestService.getRequestByFilter(status, categoryName, organizationName, days, pageable));
     }
 
+    @GetMapping("/organization-filter")
+    @PreAuthorize("hasAnyAuthority('ADMIN','STAFF','GOVERMENT')")
+    @ResponseStatus(HttpStatus.OK)
+    public BaseResponse<List<RequestResponse>> getRequestOrganizationByFilter(
+            @RequestParam(required = false) Status status,
+            @RequestParam(required = false) String categoryName,
+            @Parameter(description = "Parameter types: Son bir gün, Son bir həftə, Son bir ay")
+            @RequestParam(required = false) String days,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
+
+        return BaseResponse.OK(requestService.getRequestOrganizationByFilter(status, categoryName, token, days, pageable));
+    }
+
     @GetMapping("/search")
     @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','GOVERMENT')")
     @ResponseStatus(HttpStatus.OK)
