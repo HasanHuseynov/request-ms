@@ -73,33 +73,6 @@ public class RequestService {
         return getRequestResponses(requestList);
     }
 
-    public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName, String days,
-                                                    Pageable pageable) {
-        Specification<Request> spec = Specification.where(null);
-
-        if (status != null) {
-            spec = spec.and(RequestSpecification.hasStatus(status));
-        }
-
-        if (categoryName != null && !categoryName.isEmpty()) {
-            spec = spec.and(RequestSpecification.hasCategory(categoryName));
-        }
-
-        if (organizationName != null && !organizationName.isEmpty()) {
-            spec = spec.and(RequestSpecification.hasOrganization(organizationName));
-        }
-
-        if ("Son bir gün".equalsIgnoreCase(days)) {
-            spec = spec.and(RequestSpecification.isCreatedWithinLast1Day());
-        } else if ("Son bir həftə".equalsIgnoreCase(days)) {
-            spec = spec.and(RequestSpecification.isCreatedWithinLast7Days());
-        } else if ("Son bir ay".equalsIgnoreCase(days)) {
-            spec = spec.and(RequestSpecification.isCreatedWithinLast30Days());
-        }
-
-        return getRequestResponses(requestRepository.findAll(spec, pageable).getContent());
-    }
-
 
     public List<RequestResponse> getUserRequest(Pageable pageable) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -208,6 +181,61 @@ public class RequestService {
         response.setLikeSuccess(isLiked);
         return response;
     }
+    public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName, String days,
+                                                    Pageable pageable) {
+        Specification<Request> spec = Specification.where(null);
+
+        if (status != null) {
+            spec = spec.and(RequestSpecification.hasStatus(status));
+        }
+
+        if (categoryName != null && !categoryName.isEmpty()) {
+            spec = spec.and(RequestSpecification.hasCategory(categoryName));
+        }
+
+        if (organizationName != null && !organizationName.isEmpty()) {
+            spec = spec.and(RequestSpecification.hasOrganization(organizationName));
+        }
+
+        return getResponseList(days, pageable, spec);
+    }
+
+
+
+    public List<RequestResponse> getRequestOrganizationByFilter(Status status, String categoryName,
+                                                                String token, String days, Pageable pageable) {
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+
+        String organizationName = jwtService.extractOrganizationName(token);
+        Specification<Request> spec = Specification.where(RequestSpecification.hasOrganization(organizationName));
+
+        if (status != null) {
+            spec = spec.and(RequestSpecification.hasStatus(status));
+        }
+
+        if (categoryName != null && !categoryName.isEmpty()) {
+            spec = spec.and(RequestSpecification.hasCategory(categoryName));
+        }
+
+        return getResponseList(days, pageable, spec);
+    }
+
+
+    private List<RequestResponse> getResponseList(String days, Pageable pageable, Specification<Request> spec) {
+        if ("Son bir gün".equalsIgnoreCase(days)) {
+            spec = spec.and(RequestSpecification.isCreatedWithinLast1Day());
+        } else if ("Son bir həftə".equalsIgnoreCase(days)) {
+            spec = spec.and(RequestSpecification.isCreatedWithinLast7Days());
+        } else if ("Son bir ay".equalsIgnoreCase(days)) {
+            spec = spec.and(RequestSpecification.isCreatedWithinLast30Days());
+        }
+
+        return getRequestResponses(requestRepository.findAll(spec, pageable).getContent());
+    }
+
+
 }
 
 
