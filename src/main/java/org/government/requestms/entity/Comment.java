@@ -41,7 +41,7 @@ public class Comment {
 
     @Column(name = "create_date", nullable = false, updatable = false)
     @CreatedDate
-    private LocalDate createDate;
+    private LocalDateTime createDate;
 
     @Column(name = "create_by", nullable = false, updatable = false)
     @CreatedBy
