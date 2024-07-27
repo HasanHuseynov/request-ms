@@ -20,7 +20,7 @@ public class CommentResponse {
     private String commentText;
 
     @JsonFormat(pattern = "dd.MM.yyyy")
-    private LocalDate createDate;
+    private LocalDateTime createDate;
 
 
 }
