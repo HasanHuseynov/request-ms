@@ -127,15 +127,18 @@ public class RequestController {
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasAnyAuthority('USER','ADMIN','STAFF','GOVERMENT')")
+    @PreAuthorize("hasAnyAuthority('STAFF','GOVERMENT','SUPER_STAFF')")
     @ResponseStatus(HttpStatus.OK)
     public BaseResponse<List<RequestResponse>> searchRequests(@RequestParam(required = false) String keyword,
-                                                              @RequestParam(required = false) String id,
+                                                              @RequestParam(required = false) String requestId,
                                                               @RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "10") int size
+                                                              @RequestParam(defaultValue = "10") int size,
+                                                              HttpServletRequest request
     ) {
+        String token = request.getHeader("Authorization");
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createDate").descending());
-        return BaseResponse.OK(requestService.searchRequests(keyword, id, pageable));
+        return BaseResponse.OK(requestService.searchRequests(keyword, requestId, pageable, token));
     }
 
     @PatchMapping("/update-status/{requestId}")

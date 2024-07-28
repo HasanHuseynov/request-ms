@@ -61,13 +61,21 @@ public class RequestService {
         return getRequestResponses(requestList);
     }
 
-    public List<RequestResponse> searchRequests(String keyword, String id, Pageable pageable) {
+    public List<RequestResponse> searchRequests(String keyword, String requestId, Pageable pageable, String token) {
         Page<Request> requestPage;
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
 
-        if ((keyword == null || keyword.isEmpty()) && (id == null || id.isEmpty())) {
-            requestPage = requestRepository.findAll(pageable);
+        String organizationName = jwtService.extractOrganizationName(token);
+
+        if ((keyword == null || keyword.isEmpty()) && (requestId == null || requestId.isEmpty())) {
+            requestPage = requestRepository.findByOrganizationName(organizationName, pageable);
+
+        } else if (keyword != null && !keyword.isEmpty() && requestId != null && !requestId.isEmpty()) {
+            requestPage = requestRepository.findByOrganizationNameAndDescriptionContainingAndId(organizationName, keyword, Long.parseLong(requestId), pageable);
         } else {
-            requestPage = requestRepository.findByDescriptionContainingOrId(keyword, id, pageable);
+            requestPage = requestRepository.findByOrganizationNameAndDescriptionContainingOrId(organizationName, keyword, requestId, pageable);
         }
         List<Request> requestList = requestPage.getContent();
         return getRequestResponses(requestList);
@@ -181,6 +189,7 @@ public class RequestService {
         response.setLikeSuccess(isLiked);
         return response;
     }
+
     public List<RequestResponse> getRequestByFilter(Status status, String categoryName, String organizationName, String days,
                                                     Pageable pageable) {
         Specification<Request> spec = Specification.where(null);
@@ -199,7 +208,6 @@ public class RequestService {
 
         return getResponseList(days, pageable, spec);
     }
-
 
 
     public List<RequestResponse> getRequestOrganizationByFilter(Status status, String categoryName,
