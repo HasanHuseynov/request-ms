@@ -135,10 +135,10 @@ public class RequestService {
     public void updateStatus(Status status, Long requestId) throws DataExistException {
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new DataNotFoundException("Status tapılmadı"));
-//        if (!request.getStatus().equals(Status.Arxivdədir)) {
+        if (!request.getStatus().equals(Status.Arxivdədir)) {
             request.setStatus(status);
             requestRepository.save(request);
-//        } else throw new DataExistException("Arxiv statusu dəyişilə bilməz");
+        } else throw new DataExistException("Arxiv statusu dəyişilə bilməz");
 
     }
 
